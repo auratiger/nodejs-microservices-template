@@ -3,7 +3,7 @@
 # considered the 'better' approach by the Docker team: https://github.com/moby/buildkit/pull/901
 
 ARG NODE_VERSION=14.15.3
-ARG STAGING_DIR=/app/customer
+ARG STAGING_DIR=/app/products
 
 # Build Stage 0
 # This build installs and caches the container node_modules
@@ -30,7 +30,7 @@ RUN deluser --remove-home node \
    && addgroup -S ${USER} -g 1000 \
    && adduser -S -G ${USER} -u 1000 -D ${USER}
 
-EXPOSE 8001
+EXPOSE 8002
 
 USER ${USER}:${USER}
 
