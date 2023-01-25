@@ -1,0 +1,59 @@
+# Due to docker not having support for specifying separate separate .dockerignore files for diferent builds (discured
+# here: https://github.com/moby/moby/issues/12886 ), I'm using this naming work around considered the 'better' approach
+# by the Docker team: https://github.com/moby/buildkit/pull/901
+
+ARG NODE_VERSION=16.18.1
+ARG BUILD_DIR=/usr/src/app
+
+# Build Stage 0
+# This build is used to install the dependencies
+# separately from the app build. This is done to cache the dependencies
+#
+FROM node:${NODE_VERSION} AS deps
+WORKDIR ${BUILD_DIR}
+
+COPY package*.json ./
+RUN npm ci
+
+
+# Build Stage 1
+# This build created a staging docker image
+# only frontent code is copied to this image to cache the build
+#
+FROM node:${NODE_VERSION} AS appbuild
+WORKDIR ${BUILD_DIR}
+
+COPY package*.json ./
+COPY public ./public/
+COPY src ./src/
+COPY --from=deps ${BUILD_DIR}/node_modules ./node_modules
+
+# Bundle app source
+RUN npm run build
+
+
+# Build Stage 2
+# This build takes the production build from staging build
+#
+FROM node:${NODE_VERSION}-alpine AS prod
+
+ARG USER=panadmin
+WORKDIR /home/${USER}
+
+COPY package*.json ./
+RUN npm ci --only=production
+
+COPY . .
+COPY --from=appbuild ${BUILD_DIR}/build ./build
+
+# Create non-root user and set ownership and permissions as required
+RUN deluser --remove-home node \
+   && addgroup -S ${USER} -g 1000 \
+   && adduser -S -G ${USER} -u 1000 -D ${USER}
+
+EXPOSE 3000
+
+USER ${USER}:${USER}
+
+CMD [ "node", "run", "start" ]
+

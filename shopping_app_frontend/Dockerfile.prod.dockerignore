@@ -1,0 +1,11 @@
+# Ignore everything
+*
+
+# Allowed files and directories
+!/build
+!/dist
+!/public
+!/package*.json
+
+# Ignore unnecessary files inside allowed directories
+# This should go after the allowed directories

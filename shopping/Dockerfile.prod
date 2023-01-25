@@ -2,7 +2,7 @@
 # (discused here: https://github.com/moby/moby/issues/12886#issuecomment-1169790418), I'm using this naming work around
 # considered the 'better' approach by the Docker team: https://github.com/moby/buildkit/pull/901
 
-ARG NODE_VERSION=14.15.3
+ARG NODE_VERSION=18.12.1
 ARG STAGING_DIR=/app/shopping
 
 # Build Stage 0
