@@ -1,0 +1,14 @@
+# Ignore everything
+*
+
+# Allowed files and directories
+!/src
+!/package*.json
+
+# Ignore unnecessary files inside allowed directories
+# This should go after the allowed directories
+**/*~
+**/*.log
+**/.DS_Store
+**/Thumbs.db
+
