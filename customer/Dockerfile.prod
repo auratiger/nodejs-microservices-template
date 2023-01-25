@@ -1,0 +1,37 @@
+# Due to docker not having support for specifying separate .dockerignore files for diferent builds
+# (discused here: https://github.com/moby/moby/issues/12886#issuecomment-1169790418), I'm using this naming work around
+# considered the 'better' approach by the Docker team: https://github.com/moby/buildkit/pull/901
+
+ARG NODE_VERSION=14.15.3
+ARG STAGING_DIR=/app/customer
+
+# Build Stage 0
+# This build installs and caches the container node_modules
+#
+FROM node:${NODE_VERSION} AS deps
+WORKDIR ${STAGING_DIR}
+
+COPY package*.json ./
+RUN npm ci --only=production
+
+# Build Stage 1
+# This build takes the staging dependencies
+#
+FROM node:${NODE_VERSION}-alpine AS prod
+
+ARG USER=someuser
+WORKDIR /home/${USER}
+
+COPY . .
+COPY --from=appbuild ${STAGING_DIR}/node_modules ./node_modules
+
+# Create a non-root user and set ownership and permissions as required
+RUN deluser --remove-home node \
+   && addgroup -S ${USER} -g 1000 \
+   && adduser -S -G ${USER} -u 1000 -D ${USER}
+
+EXPOSE 8001
+
+USER ${USER}:${USER}
+
+CMD ["npm", "run", "start"]

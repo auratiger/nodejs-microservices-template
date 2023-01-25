@@ -1,9 +1,8 @@
-version: "3.9"
-
 services:
   # Databases
   nosql-db:
     image: mongo
+    profiles: ["prod", "dev"]
     ports:
       - "27018:27017"
     container_name: nosql-db
@@ -14,6 +13,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./products
+    profiles: ["prod"]
     container_name: products
     ports:
       - "8002:8002"
@@ -23,7 +23,6 @@ services:
     volumes:
       - .:/app
       - /app/products/node_modules
-
     env_file:
       - ./products/.env.dev
 
@@ -31,6 +30,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./shopping
+    profiles: ["prod"]
     container_name: shopping
     ports:
       - "8003:8003"
@@ -45,25 +45,25 @@ services:
 
   customer:
     build:
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
       context: ./customer
+    profiles: ["prod"]
     container_name: customer
     ports:
       - "8001:8001"
     restart: always
     depends_on:
       - "nosql-db"
-
     volumes:
       - .:/app/
-      - /app/customer/node_modules
     env_file:
-      - ./customer/.env.dev
+      - ./customer/.env.prod
 
   nginx-proxy:
     build:
       dockerfile: Dockerfile
       context: ./proxy
+    profiles: ["prod"]
     depends_on:
       - products
       - shopping
