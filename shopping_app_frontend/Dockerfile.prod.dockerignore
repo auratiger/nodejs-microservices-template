@@ -4,6 +4,7 @@
 # Allowed files and directories
 !/build
 !/dist
+!/src
 !/public
 !/package*.json
 
