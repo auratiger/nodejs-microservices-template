@@ -7,9 +7,11 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
-    volumes:
-      - ./container-volumes/rabbitmq/data/:/var/lib/rabbitmq/
-      - ./container-volumes/rabbitmq/logs/:/var/log/rabbitmq
+    # volumes:
+    #   - ./container-volumes/rabbitmq/data/:/var/lib/rabbitmq/
+    #   - ./container-volumes/rabbitmq/logs/:/var/log/rabbitmq
+    networks:
+      - rabbitmq_net
 
   # Databases
   nosql-db:
@@ -20,6 +22,8 @@ services:
     container_name: nosql-db
     volumes:
       - ./container-volumes/db/:/data/db
+    networks:
+      - services_net
 
   products:
     build:
@@ -29,7 +33,7 @@ services:
     container_name: products
     ports:
       - "8002:8002"
-    # restart: always
+    restart: always
     depends_on:
       - "nosql-db"
       - "rabbitmq"
@@ -37,25 +41,28 @@ services:
       - .:/app
     env_file:
       - ./products/.env.prod
+    networks:
+      - rabbitmq_net
+      - services_net
 
-  # shopping:
-  #   build:
-  #     dockerfile: Dockerfile.prod
-  #     context: ./shopping
-  #   profiles: ["prod"]
-  #   container_name: shopping
-  #   ports:
-  #     - "8003:8003"
-  #   restart: always
-  #   depends_on:
-  #     - "nosql-db"
-  #   volumes:
-  #     - .:/app
-  #   env_file:
-  #     - ./shopping/.env.prod
-  #   networks:
-  #       - rabbitmq_net
-  #       - services_net
+  shopping:
+    build:
+      dockerfile: Dockerfile.prod
+      context: ./shopping
+    profiles: ["prod"]
+    container_name: shopping
+    ports:
+      - "8003:8003"
+    restart: always
+    depends_on:
+      - "nosql-db"
+    volumes:
+      - .:/app
+    env_file:
+      - ./shopping/.env.prod
+    networks:
+      - rabbitmq_net
+      - services_net
 
   # customer:
   #   build:
@@ -108,3 +115,8 @@ services:
   #   networks:
   #       - services_net
 
+networks:
+  rabbitmq_net:
+    driver: bridge
+  services_net:
+    driver: bridge
