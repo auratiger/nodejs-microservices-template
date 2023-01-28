@@ -5,6 +5,6 @@
 **/build
 **/db
 **/*.log
-yarn.lock
+**/*yarn.lock
 rabbitmq
 container-volumes
