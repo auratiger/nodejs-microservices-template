@@ -1,4 +1,16 @@
 services:
+  rabbitmq:
+    image: rabbitmq:3.11.7-management-alpine
+    container_name: 'rabbitmq'
+    hostname: rabbitmq
+    profiles: ["prod", "dev"]
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ./container-volumes/rabbitmq/data/:/var/lib/rabbitmq/
+      - ./container-volumes/rabbitmq/logs/:/var/log/rabbitmq
+
   # Databases
   nosql-db:
     image: mongo
@@ -7,7 +19,7 @@ services:
       - "27018:27017"
     container_name: nosql-db
     volumes:
-      - ./db/:/data/db
+      - ./container-volumes/db/:/data/db
 
   products:
     build:
@@ -17,70 +29,82 @@ services:
     container_name: products
     ports:
       - "8002:8002"
-    restart: always
+    # restart: always
     depends_on:
       - "nosql-db"
+      - "rabbitmq"
     volumes:
       - .:/app
     env_file:
       - ./products/.env.prod
 
-  shopping:
-    build:
-      dockerfile: Dockerfile.prod
-      context: ./shopping
-    profiles: ["prod"]
-    container_name: shopping
-    ports:
-      - "8003:8003"
-    restart: always
-    depends_on:
-      - "nosql-db"
-    volumes:
-      - .:/app
-    env_file:
-      - ./shopping/.env.prod
+  # shopping:
+  #   build:
+  #     dockerfile: Dockerfile.prod
+  #     context: ./shopping
+  #   profiles: ["prod"]
+  #   container_name: shopping
+  #   ports:
+  #     - "8003:8003"
+  #   restart: always
+  #   depends_on:
+  #     - "nosql-db"
+  #   volumes:
+  #     - .:/app
+  #   env_file:
+  #     - ./shopping/.env.prod
+  #   networks:
+  #       - rabbitmq_net
+  #       - services_net
 
-  customer:
-    build:
-      dockerfile: Dockerfile.prod
-      context: ./customer
-    profiles: ["prod"]
-    container_name: customer
-    ports:
-      - "8001:8001"
-    restart: always
-    depends_on:
-      - "nosql-db"
-    volumes:
-      - .:/app/
-    env_file:
-      - ./customer/.env.prod
+  # customer:
+  #   build:
+  #     dockerfile: Dockerfile.prod
+  #     context: ./customer
+  #   profiles: ["prod"]
+  #   container_name: customer
+  #   ports:
+  #     - "8001:8001"
+  #   restart: always
+  #   depends_on:
+  #     - "nosql-db"
+  #   volumes:
+  #     - .:/app/
+  #   env_file:
+  #     - ./customer/.env.prod
+  #   networks:
+  #       - rabbitmq_net
+  #       - services_net
 
-  nginx-proxy:
-    build:
-      dockerfile: Dockerfile
-      context: ./proxy
-    profiles: ["prod"]
-    depends_on:
-      - products
-      - shopping
-      - customer
-    ports:
-      - 80:80
+  # nginx-proxy:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: ./proxy
+  #   profiles: ["prod"]
+  #   depends_on:
+  #     - products
+  #     - shopping
+  #     - customer
+  #   ports:
+  #     - 80:80
+  #   networks:
+  #       - services_net
 
-  webapp:
-    build:
-      dockerfile: Dockerfile.prod
-      context: ./shopping_app_frontend
-    profiles: ["prod"]
-    container_name: webapp
-    ports:
-      - "3000:3000"
-    restart: always
-    depends_on:
-      - "nginx-proxy"
-    environment:
-      - NODE_ENV=production
-    env_file:
-      - ./shopping_app_frontend/.env.prod
+  # webapp:
+  #   build:
+  #     dockerfile: Dockerfile.prod
+  #     context: ./shopping_app_frontend
+  #   profiles: ["prod"]
+  #   container_name: webapp
+  #   ports:
+  #     - "3000:3000"
+  #   restart: always
+  #   depends_on:
+  #     - "nginx-proxy"
+  #   environment:
+  #     - NODE_ENV=production
+  #   env_file:
+  #     - ./shopping_app_frontend/.env.prod
+  #   networks:
+  #       - services_net
+

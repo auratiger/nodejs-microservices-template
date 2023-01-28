@@ -6,3 +6,5 @@
 **/db
 **/*.log
 yarn.lock
+rabbitmq
+container-volumes
