@@ -25,6 +25,26 @@ services:
     networks:
       - services_net
 
+  customer:
+    build:
+      dockerfile: Dockerfile.prod
+      context: ./customer
+    profiles: ["prod"]
+    container_name: customer
+    ports:
+      - "8001:8001"
+    restart: always
+    depends_on:
+      - "nosql-db"
+      - "rabbitmq"
+    volumes:
+      - .:/app/
+    env_file:
+      - ./customer/.env.prod
+    networks:
+        - rabbitmq_net
+        - services_net
+
   products:
     build:
       dockerfile: Dockerfile.prod
@@ -56,6 +76,7 @@ services:
     restart: always
     depends_on:
       - "nosql-db"
+      - "rabbitmq"
     volumes:
       - .:/app
     env_file:
@@ -63,25 +84,6 @@ services:
     networks:
       - rabbitmq_net
       - services_net
-
-  # customer:
-  #   build:
-  #     dockerfile: Dockerfile.prod
-  #     context: ./customer
-  #   profiles: ["prod"]
-  #   container_name: customer
-  #   ports:
-  #     - "8001:8001"
-  #   restart: always
-  #   depends_on:
-  #     - "nosql-db"
-  #   volumes:
-  #     - .:/app/
-  #   env_file:
-  #     - ./customer/.env.prod
-  #   networks:
-  #       - rabbitmq_net
-  #       - services_net
 
   # nginx-proxy:
   #   build:
