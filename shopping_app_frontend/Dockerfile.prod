@@ -49,11 +49,15 @@ COPY --from=appbuild ${BUILD_DIR}/build ./build
 # Create non-root user and set ownership and permissions as required
 RUN deluser --remove-home node \
    && addgroup -S ${USER} -g 1000 \
-   && adduser -S -G ${USER} -u 1000 -D ${USER}
+   && adduser -S -G ${USER} -u 1000 -D ${USER} \
+   && mkdir -p node_modules/.cache \
+   && chown -R ${USER}:${USER} node_modules/.cache
+# I'm keeping all source files with root permissions for sercurity reasons, but setting the
+# node_modules/.cache folder with write permissions for the user
 
 EXPOSE 3000
 
 USER ${USER}:${USER}
 
-CMD [ "node", "run", "start" ]
+CMD [ "npm", "run", "start" ]
 
