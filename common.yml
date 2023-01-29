@@ -29,8 +29,8 @@ services:
   base-mongo:
     image: mongo
     restart: on-failure
-    ports:
-      - "27017:27017"
+    # ports:
+    #   - "27017:27017"
     # environment:
     #   MONGO_INITDB_ROOT_USERNAME: mongo
     #   MONGO_INITDB_ROOT_PASSWORD: mongo

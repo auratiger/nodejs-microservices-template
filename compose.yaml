@@ -19,7 +19,7 @@ services:
     extends:
       file: common.yml
       service: base-mongo
-    container_name: mongodb
+    container_name: mongodb-customer
     profiles: ["prod", "dev"]
     ports:
       - "27018:27017"
@@ -32,7 +32,7 @@ services:
     extends:
       file: common.yml
       service: base-mongo
-    container_name: mongodb
+    container_name: mongodb-products
     profiles: ["prod", "dev"]
     ports:
       - "27019:27017"
@@ -45,7 +45,7 @@ services:
     extends:
       file: common.yml
       service: base-mongo
-    container_name: mongodb
+    container_name: mongodb-shopping
     profiles: ["prod", "dev"]
     ports:
       - "27020:27017"
