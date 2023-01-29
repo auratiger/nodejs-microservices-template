@@ -68,7 +68,7 @@ services:
     depends_on:
       mongodb-customer:
         # NOTE: specifies that a dependency is expected to be "healthy" (as indicated by healthcheck) before starting a dependent service.
-        condition: service_healthy
+        condition: service_started
       rabbitmq:
         condition: service_healthy
     volumes:
@@ -91,7 +91,7 @@ services:
     restart: on-failure
     depends_on:
       mongodb-products:
-        condition: service_healthy
+        condition: service_started
       rabbitmq:
         condition: service_healthy
     volumes:
@@ -114,7 +114,7 @@ services:
     restart: on-failure
     depends_on:
       mongodb-shopping:
-        condition: service_healthy
+        condition: service_started
       rabbitmq:
         condition: service_healthy
     volumes:
