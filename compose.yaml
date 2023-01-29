@@ -1,22 +1,11 @@
 services:
   rabbitmq:
-    image: rabbitmq:3.11.7-management-alpine
+    extends:
+      file: common.yml
+      service: base-rabbit
     container_name: 'rabbitmq'
     hostname: rabbitmq
     profiles: ["prod", "dev"]
-    ports:
-      - 5672:5672
-      - 15672:15672
-    restart: always
-    healthcheck:
-      test: rabbitmq-diagnostics -q ping
-      interval: 30s
-      # NOTE: `timeout` - If a single run of the check takes longer than timeout seconds then the check is considered to have failed.
-      timeout: 30s
-      # NOTE: `start_period` - provides initialization time for containers that need time to bootstrap.
-      # Probe failure during that period will not be counted towards the maximum number of retries.
-      start_period: 40s
-      retries: 3
     # volumes:
     #   - ./container-volumes/rabbitmq/data/:/var/lib/rabbitmq/
     #   - ./container-volumes/rabbitmq/logs/:/var/log/rabbitmq
@@ -25,18 +14,13 @@ services:
 
   # Databases
   nosql-db:
-    image: mongo
+    extends:
+      file: common.yml
+      service: base-mongo
+    container_name: nosql-db
     profiles: ["prod", "dev"]
     ports:
       - "27018:27017"
-    container_name: nosql-db
-    restart: always
-    healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/test --quiet
-      interval: 10s
-      timeout: 10s
-      retries: 5
-      start_period: 40s
     volumes:
       - ./container-volumes/db/:/data/db
     networks:

@@ -1,0 +1,36 @@
+# Share Compose configurations between files and projects: https://docs.docker.com/compose/extends/#extending-services
+
+# NOTE: Docker Compose’s extends keyword enables the sharing of common configurations among different files,
+# or even different projects entirely. 
+# Extending services is useful if you have several services that reuse a common set of configuration options.
+# Using extends you can define a common set of service options in one place and refer to it from anywhere.
+#
+services:
+
+  base-rabbit:
+    image: rabbitmq:3.11.7-management-alpine
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      # NOTE: `timeout` - If a single run of the check takes longer than timeout seconds then the check is considered to have failed.
+      timeout: 30s
+      # NOTE: `start_period` - provides initialization time for containers that need time to bootstrap.
+      # Probe failure during that period will not be counted towards the maximum number of retries.
+      start_period: 40s
+      retries: 3
+
+  base-mongo:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/test --quiet
+      interval: 20s
+      timeout: 20s
+      retries: 5
+      start_period: 40s
