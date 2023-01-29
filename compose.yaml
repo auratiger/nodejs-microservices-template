@@ -1,4 +1,6 @@
 services:
+
+  # ---------- RabbitMQ ----------
   rabbitmq:
     extends:
       file: common.yml
@@ -12,8 +14,8 @@ services:
     networks:
       - rabbitmq_net
 
-  # Databases
-  mongodb:
+  # ---------- Databases ----------
+  mongodb-customer:
     extends:
       file: common.yml
       service: base-mongo
@@ -22,10 +24,38 @@ services:
     ports:
       - "27018:27017"
     volumes:
-      - ./container-volumes/db/:/data/db
+      - ./container-volumes/db-customer/:/data/db
     networks:
-      - backend_net
+      - customer_db_net
 
+  mongodb-products:
+    extends:
+      file: common.yml
+      service: base-mongo
+    container_name: mongodb
+    profiles: ["prod", "dev"]
+    ports:
+      - "27019:27017"
+    volumes:
+      - ./container-volumes/db-products/:/data/db
+    networks:
+      - products_db_net
+
+  mongodb-shopping:
+    extends:
+      file: common.yml
+      service: base-mongo
+    container_name: mongodb
+    profiles: ["prod", "dev"]
+    ports:
+      - "27020:27017"
+    volumes:
+      - ./container-volumes/db-shopping/:/data/db
+    networks:
+      - shopping_db_net
+
+
+  # ---------- Backend Services ----------
   customer:
     build:
       dockerfile: Dockerfile.prod
@@ -36,7 +66,7 @@ services:
       - "8001:8001"
     restart: on-failure
     depends_on:
-      mongodb:
+      mongodb-customer:
         # NOTE: specifies that a dependency is expected to be "healthy" (as indicated by healthcheck) before starting a dependent service.
         condition: service_healthy
       rabbitmq:
@@ -48,6 +78,7 @@ services:
     networks:
       - rabbitmq_net
       - backend_net
+      - customer_db_net
 
   products:
     build:
@@ -59,7 +90,7 @@ services:
       - "8002:8002"
     restart: on-failure
     depends_on:
-      mongodb:
+      mongodb-products:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
@@ -70,6 +101,7 @@ services:
     networks:
       - rabbitmq_net
       - backend_net
+      - products_db_net
 
   shopping:
     build:
@@ -81,7 +113,7 @@ services:
       - "8003:8003"
     restart: on-failure
     depends_on:
-      mongodb:
+      mongodb-shopping:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
@@ -92,7 +124,9 @@ services:
     networks:
       - rabbitmq_net
       - backend_net
+      - shopping_db_net
 
+  # ---------- Proxy ----------
   nginx-proxy:
     build:
       dockerfile: Dockerfile
@@ -109,6 +143,7 @@ services:
       - backend_net
       - frontend_net
 
+  # ---------- Frontend ----------
   webapp:
     build:
       dockerfile: Dockerfile.prod
@@ -127,10 +162,18 @@ services:
     networks:
       - frontend_net
 
+# ---------- Networks ----------
 networks:
   rabbitmq_net:
     driver: bridge
   backend_net:
     driver: bridge
   frontend_net:
+    driver: bridge
+
+  customer_db_net:
+    driver: bridge
+  products_db_net:
+    driver: bridge
+  shopping_db_net:
     driver: bridge
