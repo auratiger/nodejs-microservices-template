@@ -13,6 +13,9 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: pass123
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 20s
@@ -28,6 +31,9 @@ services:
     restart: on-failure
     ports:
       - "27017:27017"
+    # environment:
+    #   MONGO_INITDB_ROOT_USERNAME: mongo
+    #   MONGO_INITDB_ROOT_PASSWORD: mongo
     healthcheck:
       # NOTE: The hostname of the container, let's say `mongo` doesn't exist inside the mongodb container,
       # unless you specify hostname: `mongo` in your compose file. 
