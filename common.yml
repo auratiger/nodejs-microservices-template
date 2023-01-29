@@ -15,12 +15,12 @@ services:
       - 15672:15672
     healthcheck:
       test: rabbitmq-diagnostics -q ping
-      interval: 30s
+      interval: 20s
       # NOTE: `timeout` - If a single run of the check takes longer than timeout seconds then the check is considered to have failed.
-      timeout: 30s
+      timeout: 20s
       # NOTE: `start_period` - provides initialization time for containers that need time to bootstrap.
       # Probe failure during that period will not be counted towards the maximum number of retries.
-      start_period: 40s
+      start_period: 30s
       retries: 3
 
   base-mongo:
@@ -29,8 +29,15 @@ services:
     ports:
       - "27017:27017"
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/test --quiet
-      interval: 20s
-      timeout: 20s
+      # NOTE: The hostname of the container, let's say `mongo` doesn't exist inside the mongodb container,
+      # unless you specify hostname: `mongo` in your compose file. 
+      # Instead it is better to simply use `localhost` which is more common, when doing healthchecks
+      #
+      # NOTE: The legacy `mongo` shell was deprecated in `MongoDB 5.0` and removed in `MongoDB 6.0`. 
+      # The new MongoDB Shell, `mongosh`, offers numerous advantages over the legacy shell.
+      # 
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/productiondb --quiet
+      interval: 10s
+      timeout: 10s
       retries: 5
-      start_period: 40s
+      start_period: 20s
