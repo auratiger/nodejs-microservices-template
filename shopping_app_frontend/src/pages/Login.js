@@ -26,7 +26,7 @@ const Login = () => {
     },[token])
  
     const userSignup = () => {
-        //call Signup
+        dispatch(onSignup({email, password, phone: "1234" }));
     }
  
     const userLogin = () => {
@@ -49,7 +49,7 @@ const Login = () => {
                             <button  className="btn btn-primary mr-2 " onClick={() => userLogin()} type="button">
                                 Login
                             </button>
-                            <button className="btn btn-primary" type="button">
+                            <button className="btn btn-primary" onClick={() => userSignup()} type="button">
                                 Signup
                             </button> 
 

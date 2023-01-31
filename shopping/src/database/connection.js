@@ -1,15 +1,15 @@
 const mongoose = require('mongoose');
 const { DB_URL } = require('../config');
 
-module.exports = () => {
+module.exports = async() => {
 
-   try {
-      mongoose.connect(DB_URL);
-      console.log('Db Connected');
-   } catch (error) {
-      console.log('Error ============')
-      console.log(error);
-   }
+    try {
+     await mongoose.connect(DB_URL);
+     console.log('Db Connected');
+    } catch (error) {
+     console.log('Error ============')
+     console.log(error);
+    }
  
 };
 
