@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
-const { CustomerModel, AddressModel } = require('../models');
+import mongoose from 'mongoose';
+import { CustomerModel, AddressModel } from '../models';
 
 //Dealing with data base operations
-class CustomerRepository {
+export default class CustomerRepository {
   async CreateCustomer({ email, password, phone, salt }) {
     const customer = new CustomerModel({
       email,
@@ -20,7 +20,7 @@ class CustomerRepository {
     const profile = await CustomerModel.findById(_id);
 
     if (profile) {
-      const newAddress = new AddressModel({
+      const newAddress: any = new AddressModel({
         street,
         postalCode,
         city,
@@ -163,5 +163,3 @@ class CustomerRepository {
     throw new Error('Unable to add to order!');
   }
 }
-
-module.exports = CustomerRepository;

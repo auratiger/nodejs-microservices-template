@@ -1,5 +1,3 @@
 // database related modules
-module.exports = {
-  databaseConnection: require('./connection'),
-  CustomerRepository: require('./repository/customer-repository'),
-};
+export { default as databaseConnection } from './connection';
+export { default as CustomerRepository } from './repository/customer-repository';

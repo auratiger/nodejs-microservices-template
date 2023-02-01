@@ -1,4 +1,2 @@
-module.exports = {
-    CustomerModel: require('./Customer'),
-    AddressModel: require('./Address')
-}
+export { default as CustomerModel } from './Customer';
+export { default as AddressModel } from './Address';
