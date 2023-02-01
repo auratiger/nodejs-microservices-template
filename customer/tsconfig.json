@@ -1,0 +1,26 @@
+{
+   "compilerOptions": {
+      "checkJs": false,
+      "target": "es5",
+      "module": "commonjs",
+      "lib": [
+         "es6"
+      ],
+      "allowJs": true,
+      "outDir": "build",
+      "rootDir": "src",
+      "strict": false,
+      "esModuleInterop": true,
+      "types": [
+         "node",
+         "jest"
+      ],
+      "skipLibCheck": true
+   },
+   "include": [
+      "src/**/*"
+   ],
+   "exclude": [
+      "src/**/*.spec.ts"
+   ]
+}
