@@ -1,15 +1,17 @@
 import express from 'express';
 import { PORT } from './config';
+import { CreateChannel } from './utils';
 
 import { databaseConnection } from './database';
-// import expressApp from './express-app';
+import expressApp from './express-app';
 
 const startServer = async () => {
   const app = express();
 
   await databaseConnection();
 
-  // await expressApp(app);
+  const channel = await CreateChannel();
+  await expressApp(app, channel);
 
   app
     .listen(PORT, () => {
@@ -20,7 +22,7 @@ const startServer = async () => {
       process.exit();
     })
     .on('close', () => {
-      // channel.close();
+      channel.close();
     });
 };
 

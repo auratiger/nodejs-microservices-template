@@ -1,5 +1,2 @@
-
-module.exports = {
-    customer: require('./customer'),
-    appEvents: require('./app-events')
-}
+export { default as customerController } from './customer';
+export { default as appEvents } from './app-events';
