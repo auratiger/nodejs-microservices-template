@@ -8,9 +8,9 @@ services:
     container_name: 'rabbitmq'
     hostname: rabbitmq
     profiles: ["prod", "dev"]
-    # volumes:
-    #   - ./container-volumes/rabbitmq/data/:/var/lib/rabbitmq/
-    #   - ./container-volumes/rabbitmq/logs/:/var/log/rabbitmq
+    volumes:
+      - ./container-volumes/rabbitmq/data/:/var/lib/rabbitmq/
+      # - ./container-volumes/rabbitmq/logs/:/var/log/rabbitmq
     networks:
       - rabbitmq_net
 
