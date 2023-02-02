@@ -1,12 +1,13 @@
 import mongoose from 'mongoose';
 import { DB_URL } from '../config';
+import logger from '../utils/logger';
 
 export default async () => {
   try {
     await mongoose.connect(DB_URL);
-    console.log('Db Connected');
+    logger.info('Db Connected');
   } catch (error) {
-    console.error('Error ============ ON DB Connection');
-    console.log(error);
+    logger.error('Error ============ ON DB Connection');
+    logger.error(error);
   }
 };

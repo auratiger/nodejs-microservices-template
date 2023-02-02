@@ -7,13 +7,20 @@ export const STATUS_CODES = {
 };
 
 export class AppError extends Error {
+  public name: string;
+  public statusCode: number;
+  public description: string;
+  public isOperational: boolean;
+  public errorStack?: any;
+  public logingErrorResponse?: any;
+
   constructor(
-    name,
-    statusCode,
-    description,
-    isOperational,
-    errorStack,
-    logingErrorResponse,
+    name: string,
+    statusCode: number,
+    description: string,
+    isOperational: boolean,
+    errorStack?: any,
+    logingErrorResponse?: any,
   ) {
     super(description);
     Object.setPrototypeOf(this, new.target.prototype);
@@ -21,7 +28,7 @@ export class AppError extends Error {
     this.statusCode = statusCode;
     this.isOperational = isOperational;
     this.errorStack = errorStack;
-    this.logError = logingErrorResponse;
+    this.logingErrorResponse = logingErrorResponse;
     Error.captureStackTrace(this);
   }
 }
@@ -29,7 +36,7 @@ export class AppError extends Error {
 //api Specific Errors
 export class APIError extends AppError {
   constructor(
-    name,
+    name: string,
     statusCode = STATUS_CODES.INTERNAL_ERROR,
     description = 'Internal Server Error',
     isOperational = true,

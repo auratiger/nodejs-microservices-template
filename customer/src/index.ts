@@ -5,6 +5,7 @@ import { CreateChannel } from './utils';
 
 import { databaseConnection } from './database';
 import expressApp from './express-app';
+import logger from './utils/logger';
 
 const startServer = async () => {
   const app = express();
@@ -16,10 +17,10 @@ const startServer = async () => {
 
   app
     .listen(PORT, () => {
-      console.log(`listening to port ${PORT}`);
+      logger.info(`listening to port ${PORT}`);
     })
     .on('error', (err) => {
-      console.log(err);
+      logger.error(err);
       process.exit();
     })
     .on('close', () => {

@@ -7,6 +7,7 @@ import {
   GenerateSignature,
   ValidatePassword,
 } from '../../utils';
+import logger from '../../utils/logger';
 
 // All Business logic will be here
 @Service()
@@ -129,7 +130,7 @@ export default class CustomerService {
   }
 
   async SubscribeEvents(payload: any) {
-    console.log('Triggering.... Customer Events');
+    logger.info('Triggering.... Customer Events');
 
     payload = JSON.parse(payload);
 

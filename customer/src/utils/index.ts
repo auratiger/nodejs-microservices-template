@@ -8,6 +8,7 @@ import {
   CUSTOMER_SERVICE,
   MSG_QUEUE_URL,
 } from '../config';
+import logger from './logger';
 
 //Utility functions
 export const GenerateSalt = async () => {
@@ -30,7 +31,7 @@ export const GenerateSignature = async (payload) => {
   try {
     return await jwt.sign(payload, APP_SECRET, { expiresIn: '30d' });
   } catch (error) {
-    console.log(error);
+    logger.info(error);
     return error;
   }
 };
@@ -38,12 +39,12 @@ export const GenerateSignature = async (payload) => {
 export const ValidateSignature = async (req) => {
   try {
     const signature = req.get('Authorization');
-    console.log(signature);
+    logger.info(signature);
     const payload = await jwt.verify(signature.split(' ')[1], APP_SECRET);
     req.user = payload;
     return true;
   } catch (error) {
-    console.log(error);
+    logger.info(error);
     return false;
   }
 };
@@ -70,13 +71,13 @@ export const CreateChannel = async () => {
 
 export const PublishMessage = (channel, service, msg) => {
   channel.publish(EXCHANGE_NAME, service, Buffer.from(msg));
-  console.log('Sent: ', msg);
+  logger.info('Sent: ', msg);
 };
 
 export const SubscribeMessage = async (channel, service) => {
   await channel.assertExchange(EXCHANGE_NAME, 'direct', { durable: true });
   const q = await channel.assertQueue('', { exclusive: true });
-  console.log(` Waiting for messages in queue: ${q.queue}`);
+  logger.info(` Waiting for messages in queue: ${q.queue}`);
 
   channel.bindQueue(q.queue, EXCHANGE_NAME, CUSTOMER_SERVICE);
 
@@ -84,10 +85,10 @@ export const SubscribeMessage = async (channel, service) => {
     q.queue,
     (msg) => {
       if (msg.content) {
-        console.log('the message is:', msg.content.toString());
+        logger.info('the message is:', msg.content.toString());
         service.SubscribeEvents(msg.content.toString());
       }
-      console.log('[X] received');
+      logger.info('[X] received');
     },
     {
       noAck: true,
