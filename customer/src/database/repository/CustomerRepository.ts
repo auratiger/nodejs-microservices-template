@@ -1,7 +1,9 @@
+import { Service } from 'typedi';
 import mongoose from 'mongoose';
 import { CustomerModel, AddressModel } from '../models';
 
 //Dealing with data base operations
+@Service()
 export default class CustomerRepository {
   async CreateCustomer({ email, password, phone, salt }) {
     const customer = new CustomerModel({
@@ -52,7 +54,7 @@ export default class CustomerRepository {
     return existingCustomer;
   }
 
-  async Wishlist(customerId) {
+  async Wishlist(customerId: string) {
     const profile = await CustomerModel.findById(customerId).populate(
       'wishlist',
     );
@@ -61,7 +63,7 @@ export default class CustomerRepository {
   }
 
   async AddWishlistItem(
-    customerId,
+    customerId: string,
     { _id, name, desc, price, available, banner },
   ) {
     const product = {
@@ -78,7 +80,7 @@ export default class CustomerRepository {
     );
 
     if (profile) {
-      let wishlist = profile.wishlist;
+      const wishlist = profile.wishlist;
 
       if (wishlist.length > 0) {
         let isExist = false;
@@ -105,7 +107,12 @@ export default class CustomerRepository {
     return profileResult.wishlist;
   }
 
-  async AddCartItem(customerId, { _id, name, price, banner }, qty, isRemove) {
+  async AddCartItem(
+    customerId: string,
+    { _id, name, price, banner },
+    qty: any,
+    isRemove: boolean,
+  ) {
     const profile = await CustomerModel.findById(customerId).populate('cart');
 
     if (profile) {
@@ -114,7 +121,7 @@ export default class CustomerRepository {
         unit: qty,
       };
 
-      let cartItems = profile.cart;
+      const cartItems = profile.cart;
 
       if (cartItems.length > 0) {
         let isExist = false;
@@ -144,7 +151,7 @@ export default class CustomerRepository {
     throw new Error('Unable to add to cart!');
   }
 
-  async AddOrderToProfile(customerId, order) {
+  async AddOrderToProfile(customerId: string, order: any) {
     const profile = await CustomerModel.findById(customerId);
 
     if (profile) {

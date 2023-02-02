@@ -1,23 +1,16 @@
 import amqplib from 'amqplib';
-import { EXCHANGE_NAME, CUSTOMER_SERVICE, HOSTNAME } from '../config';
+import { EXCHANGE_NAME, CUSTOMER_SERVICE, HOSTNAME } from '../../config';
+import { Service } from 'typedi';
 
-let _pubsubInstance: any;
-
-export default class PubSub {
-  amqpConn = null;
-  subChannel = null;
-  pubChannel = null;
-  subList = [];
-  offlineSubReq = null;
-  subQueue = null;
-  offlinePublishReq = null;
-
-  constructor() {
-    if (!_pubsubInstance) {
-      _pubsubInstance = this;
-    }
-    return _pubsubInstance;
-  }
+@Service()
+export default class PubSubService {
+  private amqpConn: any = null;
+  private subChannel: any = null;
+  private pubChannel: any = null;
+  private subList: Map<string, () => void> = new Map();
+  private offlineSubReq: any = null;
+  private subQueue: any = null;
+  private offlinePublishReq: any = null;
 
   createConnection() {
     amqplib.connect(
@@ -98,7 +91,7 @@ export default class PubSub {
     this.amqpConn.createConfirmChannel((err: any, ch: any) => {
       if (err) {
         console.error('[AMQP] pub channel error', err.message);
-        return false;
+        return;
       }
 
       if (!ch) {
@@ -185,9 +178,9 @@ export default class PubSub {
   subscribe(service: string, handler: () => void) {
     try {
       console.debug(`Pubsub>>subscribe. Service: ${service}`);
-      if (!this.subList[service]) {
+      if (!this.subList.has(service)) {
         console.debug(`Pubsub>>subscribe Added service:${service}`);
-        this.subList[service] = handler;
+        this.subList.set(service, handler);
       }
 
       this.addToOfflineQueue(this.offlineSubReq, service, handler);

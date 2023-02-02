@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import express from 'express';
 import { PORT } from './config';
 import { CreateChannel } from './utils';

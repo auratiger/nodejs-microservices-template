@@ -1,20 +1,24 @@
-import { CustomerRepository } from '../database';
+import { Service } from 'typedi';
+import CustomerRepository from '../../database';
 import {
   FormateData,
   GeneratePassword,
   GenerateSalt,
   GenerateSignature,
   ValidatePassword,
-} from '../utils';
+} from '../../utils';
 
 // All Business logic will be here
-class CustomerService {
-  repository = new CustomerRepository();
+@Service()
+export default class CustomerService {
+  constructor(private readonly customerRepository: CustomerRepository) {}
 
-  async SignIn(userInputs) {
+  async SignIn(userInputs: { email: string; password: string }) {
     const { email, password } = userInputs;
 
-    const existingCustomer = await this.repository.FindCustomer({ email });
+    const existingCustomer = await this.customerRepository.FindCustomer({
+      email,
+    });
 
     if (existingCustomer) {
       const validPassword = await ValidatePassword(
@@ -34,15 +38,14 @@ class CustomerService {
     return FormateData(null);
   }
 
-  async SignUp(userInputs) {
+  async SignUp(userInputs: { email: string; password: string; phone: string }) {
     const { email, password, phone } = userInputs;
 
     // create salt
-    let salt = await GenerateSalt();
+    const salt = await GenerateSalt();
+    const userPassword = await GeneratePassword(password, salt);
 
-    let userPassword = await GeneratePassword(password, salt);
-
-    const existingCustomer = await this.repository.CreateCustomer({
+    const existingCustomer = await this.customerRepository.CreateCustomer({
       email,
       password: userPassword,
       phone,
@@ -59,7 +62,7 @@ class CustomerService {
   async AddNewAddress(_id, userInputs) {
     const { street, postalCode, city, country } = userInputs;
 
-    const addressResult = await this.repository.CreateAddress({
+    const addressResult = await this.customerRepository.CreateAddress({
       _id,
       street,
       postalCode,
@@ -70,13 +73,17 @@ class CustomerService {
     return FormateData(addressResult);
   }
 
-  async GetProfile(id) {
-    const existingCustomer = await this.repository.FindCustomerById({ id });
+  async GetProfile(id: any) {
+    const existingCustomer = await this.customerRepository.FindCustomerById({
+      id,
+    });
     return FormateData(existingCustomer);
   }
 
-  async GetShopingDetails(id) {
-    const existingCustomer = await this.repository.FindCustomerById({ id });
+  async GetShopingDetails(id: any) {
+    const existingCustomer = await this.customerRepository.FindCustomerById({
+      id,
+    });
 
     if (existingCustomer) {
       // const orders = await this.shopingRepository.Orders(id);
@@ -85,21 +92,26 @@ class CustomerService {
     return FormateData({ msg: 'Error' });
   }
 
-  async GetWishList(customerId) {
-    const wishListItems = await this.repository.Wishlist(customerId);
+  async GetWishList(customerId: string) {
+    const wishListItems = await this.customerRepository.Wishlist(customerId);
     return FormateData(wishListItems);
   }
 
-  async AddToWishlist(customerId, product) {
-    const wishlistResult = await this.repository.AddWishlistItem(
+  async AddToWishlist(customerId: string, product: any) {
+    const wishlistResult = await this.customerRepository.AddWishlistItem(
       customerId,
       product,
     );
     return FormateData(wishlistResult);
   }
 
-  async ManageCart(customerId, product, qty, isRemove) {
-    const cartResult = await this.repository.AddCartItem(
+  async ManageCart(
+    customerId: string,
+    product: any,
+    qty: any,
+    isRemove: boolean,
+  ) {
+    const cartResult = await this.customerRepository.AddCartItem(
       customerId,
       product,
       qty,
@@ -108,15 +120,15 @@ class CustomerService {
     return FormateData(cartResult);
   }
 
-  async ManageOrder(customerId, order) {
-    const orderResult = await this.repository.AddOrderToProfile(
+  async ManageOrder(customerId: string, order: any) {
+    const orderResult = await this.customerRepository.AddOrderToProfile(
       customerId,
       order,
     );
     return FormateData(orderResult);
   }
 
-  async SubscribeEvents(payload) {
+  async SubscribeEvents(payload: any) {
     console.log('Triggering.... Customer Events');
 
     payload = JSON.parse(payload);
@@ -144,5 +156,3 @@ class CustomerService {
     }
   }
 }
-
-export default CustomerService;
