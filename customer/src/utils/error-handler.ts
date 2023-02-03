@@ -1,4 +1,4 @@
-import { ErrorLogger } from './logger';
+import logger, { ErrorLogger } from './logger';
 
 const ErrorHandler = async (err, req, res, next) => {
   const errorLogger = new ErrorLogger();

@@ -2,17 +2,14 @@
    "compilerOptions": {
       "checkJs": false,
       "target": "es5",
-      "module": "commonjs",
+      "module": "CommonJS",
+      "sourceMap": true,
       "lib": [
          "es6"
       ],
       "allowJs": true,
       "outDir": "build",
       "rootDir": "src",
-      "strict": false,
-      "strictNullChecks": false,
-      "strictFunctionTypes": false,
-      "strictPropertyInitialization": false, // this one is for preventing the typescript errors while using @Inject()
       "esModuleInterop": true,
       "types": [
          "node",
@@ -21,22 +18,37 @@
       ],
       "removeComments": true,
       "skipLibCheck": true,
-      "emitDecoratorMetadata": true,
-      "experimentalDecorators": true,
-      "noImplicitAny": false,
+      "declaration": true,
       "noImplicitReturns": false,
-      "noImplicitThis": false,
       "noUnusedLocals": false,
       "noUnusedParameters": false,
       "noFallthroughCasesInSwitch": true,
       "allowSyntheticDefaultImports": true,
-      "resolveJsonModule": true
+      "resolveJsonModule": true,
+      /* Experimental Options */
+      "experimentalDecorators": true /* Enables experimental support for ES7 decorators. */,
+      "emitDecoratorMetadata": true /* Enables experimental support for emitting type metadata for decorators. */,
+      /* Strict Type-Checking Options */
+      "strict": false,
+      "noImplicitAny": false /* Raise error on expressions and declarations with an implied 'any' type. */,
+      "strictNullChecks": false /* Enable strict null checks. */,
+      "strictFunctionTypes": false /* Enable strict checking of function types. */,
+      "strictPropertyInitialization": false /* Enable strict checking of property initialization in classes. this one is for preventing the typescript errors while using @Inject()*/,
+      "noImplicitThis": false /* Raise error on 'this' expressions with an implied 'any' type. */,
+      "alwaysStrict": false /* Parse in strict mode and emit "use strict" for each source file. */,
+      /* Debugging Options */
+      "traceResolution": false /* Report module resolution log messages. */,
+      "listEmittedFiles": false /* Print names of generated files part of the compilation. */,
+      "listFiles": false /* Print names of files part of the compilation. */,
+      "pretty": true /* Stylize errors and messages using color and context. */
    },
    "include": [
       "src/**/*"
    ],
    "exclude": [
-      "src/**/*.spec.ts",
-      "node_modules"
+      "node_modules",
+      "dist",
+      "coverage",
+      "src/**/*.spec.ts"
    ]
 }
