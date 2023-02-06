@@ -1,0 +1,9 @@
+#!/bin/sh
+. "$(dirname $0)/_/husky.sh"
+
+# Runs the linting check in the customer service
+# Using `cd` in a subshell to run `npm` from the correct directory
+(cd "$(dirname $0)/../customer"; npm run lint)
+# (cd "$(dirname $0)/../products"; npm run lint)
+# (cd "$(dirname $0)/../shopping"; npm run lint)
+# (cd "$(dirname $0)/../shopping_app_frontend"; npm run lint)

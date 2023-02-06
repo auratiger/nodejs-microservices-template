@@ -1,0 +1,58 @@
+#!/bin/bash
+. "$(dirname $0)/_/husky.sh"
+
+set -e # exit immediately after error
+
+# Color codes
+RED='\033[0;31m'
+YELLOW='\033[0;33m'
+GREEN='\033[0;32m'        
+NC='\033[0m' # No colors
+
+# ===========================================
+#            BRANCH VALIDATION
+# ===========================================
+
+echo "checking branch name..."
+
+# set this to your active development branch
+current_branch="$(git rev-parse --abbrev-ref HEAD)"
+
+# regex to validate branch name
+conventional_branch_regex='^(fix|feat|chore|refactor|improvement|ci|docs|test)\/.*'
+branch_error_msg="Aborting commit. Your branch name: '$current_branch' doesn't fit the contributing-guidelines. See: https://gist.github.com/buddiman/628d55d0b08ff0672af5f4c156afeb08"
+
+# Check the branch, if we match
+if ! [[ "$current_branch" =~ $conventional_branch_regex ]]; then
+   echo -e "${RED}$branch_error_msg${NC}" >&2
+   echo -e "Should match regex: $conventional_branch_regex"
+   exit 1
+fi
+
+echo -e "${GREEN}Your branch name meets the Conventional branch rules"
+
+# ===========================================
+#        COMMIT MESSAGE VALIDATION
+# ===========================================
+
+echo -e "${GREEN}checking commit message..."
+
+# Get the commit message (the parameter we're given is just the path to the
+# temporary file which holds the message).
+commit_message=$(cat "$1")
+
+# Create a regex for a conventional commit.
+convetional_commit_regex="^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([a-z \-]+\))?!?: .+$"
+commit_error_msg="Aborting commit. Your commit message: '$commit_message' doesn't fit the contributing-guidelines. See: https://gist.github.com/buddiman/628d55d0b08ff0672af5f4c156afeb08"
+
+# Check the message, if we match
+if ! [[ "$commit_message" =~ $convetional_commit_regex ]]; then
+   echo -e "${RED}$commit_error_msg" >&2
+   echo -e "${YELLOW}Should match regex: $convetional_commit_regex"
+   echo -e "${YELLOW}An example of a valid message is:"
+   echo -e "${YELLOW}  feat(login): add the 'remember me' button${NC}"
+   exit 1
+fi
+
+echo -e "${GREEN}Your commit message meets the Conventional Commit rules${NC}"
+exit 0
