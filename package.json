@@ -8,6 +8,5 @@
    "scripts": {
       "prepare": "husky install"
    },
-   "author": "",
    "license": "ISC"
 }
