@@ -1,4 +1,5 @@
 import { Service } from 'typedi';
+import { CUSTOMER_SERVICE, SHOPPING_SERVICE } from '../config/index.js';
 import ProductService from '../services/products/ProductService.js';
 import PubSubService from '../services/pubsub/PubSubService.js';
 import UserAuth from './middlewares/UserAuth.js';
@@ -67,8 +68,7 @@ export default class ProductController {
         'ADD_TO_WISHLIST',
       );
 
-      // PublishCustomerEvent(data);
-      // NOTE: PublishMessage(channel, CUSTOMER_SERVICE, JSON.stringify(data));
+      this.pubSubService.publishMessage(CUSTOMER_SERVICE, JSON.stringify(data));
 
       res.status(200).json(data.data.product);
     });
@@ -82,8 +82,7 @@ export default class ProductController {
         { productId },
         'REMOVE_FROM_WISHLIST',
       );
-      // PublishCustomerEvent(data);
-      // NOTE: PublishMessage(channel, CUSTOMER_SERVICE, JSON.stringify(data));
+      this.pubSubService.publishMessage(CUSTOMER_SERVICE, JSON.stringify(data));
 
       res.status(200).json(data.data.product);
     });
@@ -97,11 +96,8 @@ export default class ProductController {
         'ADD_TO_CART',
       );
 
-      // PublishCustomerEvent(data);
-      // PublishShoppingEvent(data);
-
-      // NOTE: PublishMessage(channel, CUSTOMER_SERVICE, JSON.stringify(data));
-      // NOTE: PublishMessage(channel, SHOPPING_SERVICE, JSON.stringify(data));
+      this.pubSubService.publishMessage(CUSTOMER_SERVICE, JSON.stringify(data));
+      this.pubSubService.publishMessage(SHOPPING_SERVICE, JSON.stringify(data));
 
       const response = { product: data.data.product, unit: data.data.qty };
 
@@ -118,11 +114,8 @@ export default class ProductController {
         'REMOVE_FROM_CART',
       );
 
-      // PublishCustomerEvent(data);
-      // PublishShoppingEvent(data);
-
-      // NOTE: PublishMessage(channel, CUSTOMER_SERVICE, JSON.stringify(data));
-      // NOTE: PublishMessage(channel, SHOPPING_SERVICE, JSON.stringify(data));
+      this.pubSubService.publishMessage(CUSTOMER_SERVICE, JSON.stringify(data));
+      this.pubSubService.publishMessage(SHOPPING_SERVICE, JSON.stringify(data));
 
       const response = { product: data.data.product, unit: data.data.qty };
 

@@ -1,8 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import axios from 'axios';
-import amqplib from 'amqplib';
-import { APP_SECRET, EXCHANGE_NAME, MSG_QUEUE_URL } from '../config/index.js';
+import { APP_SECRET } from '../config/index.js';
 import logger from './logger.js';
 
 //Utility functions
@@ -50,39 +48,4 @@ export const FormateData = (data) => {
   } else {
     throw new Error('Data Not found!');
   }
-};
-
-//Raise Events
-export const PublishCustomerEvent = async (payload) => {
-  axios.post('http://customer:8001/app-events/', {
-    payload,
-  });
-
-  //     axios.post(`${BASE_URL}/customer/app-events/`,{
-  //         payload
-  //     });
-};
-
-export const PublishShoppingEvent = async (payload) => {
-  // axios.post('http://gateway:8000/shopping/app-events/',{
-  //         payload
-  // });
-
-  axios.post(`http://shopping:8003/app-events/`, {
-    payload,
-  });
-};
-
-//Message Broker
-
-export const CreateChannel = async () => {
-  const connection = await amqplib.connect(MSG_QUEUE_URL);
-  const channel = await connection.createChannel();
-  await channel.assertQueue(EXCHANGE_NAME, 'direct', { durable: true });
-  return channel;
-};
-
-export const PublishMessage = (channel, service, msg) => {
-  channel.publish(EXCHANGE_NAME, service, Buffer.from(msg));
-  console.log('Sent: ', msg);
 };

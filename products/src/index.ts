@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import express from 'express';
 import cors from 'cors';
 import DatabaseConnection from './database/DatabaseConnection.js';
@@ -18,9 +20,6 @@ const StartServer = async () => {
   await pubSubService.createConnection();
 
   Container.get(ProductController).init(app);
-
-  //api
-  // appEvents(app);
 
   app.use(express.static(__dirname + '/public'));
 
