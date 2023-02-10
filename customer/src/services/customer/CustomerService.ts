@@ -6,7 +6,7 @@ import {
   GenerateSalt,
   GenerateSignature,
   ValidatePassword,
-} from '../../utils/index.js';
+} from '../../utils/utils.js';
 import logger from '../../utils/logger.js';
 
 // All Business logic will be here
