@@ -35,6 +35,7 @@ const logger: Logger = createLogger({
   transports: [
     new transports.Console(),
     new transports.File({
+      dirname: logDir,
       filename: 'combined.log',
     }),
     new transports.File({
