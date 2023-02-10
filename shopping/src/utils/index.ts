@@ -1,6 +1,8 @@
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import amqplib from 'amqplib';
+import { APP_SECRET } from '../config/index.js';
+import logger from './logger.js';
 
 //Utility functions
 export const GenerateSalt = async () => {

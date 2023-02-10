@@ -1,8 +1,11 @@
 import mongoose from 'mongoose';
-// import { v4: uuidv4 } from 'uuid';
+import { Service } from 'typedi';
+import { CartModel, OrderModel } from '../models/index.js';
+import { v4 as uuidv4 } from 'uuid';
 
 //Dealing with data base operations
-class ShoppingRepository {
+@Service()
+export default class ShoppingRepository {
   async Orders(customerId) {
     const orders = await OrderModel.find({ customerId });
 
@@ -32,7 +35,7 @@ class ShoppingRepository {
       let cartItems = cart.items;
 
       if (cartItems.length > 0) {
-        cartItems.map((item) => {
+        cartItems.map((item: any) => {
           if (item.product._id.toString() === _id.toString()) {
             if (isRemove) {
               cartItems.splice(cartItems.indexOf(item), 1);
@@ -72,7 +75,7 @@ class ShoppingRepository {
       if (cartItems.length > 0) {
         //process Order
 
-        cartItems.map((item) => {
+        cartItems.map((item: any) => {
           amount += parseInt(item.product.price) * parseInt(item.unit);
         });
 
@@ -97,5 +100,3 @@ class ShoppingRepository {
     return {};
   }
 }
-
-module.exports = ShoppingRepository;

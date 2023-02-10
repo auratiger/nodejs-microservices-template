@@ -5,6 +5,9 @@ import express from 'express';
 import DatabaseConnection from './database/DatabaseConnection.js';
 import { PORT } from './config/index.js';
 import logger from './utils/logger.js';
+import { Container } from 'typedi';
+import PubSubService from './services/pubsub/PubSubService.js';
+import ShoppingController from './api/ShoppingController.js';
 
 const StartServer = async () => {
   const app = express();
@@ -13,10 +16,10 @@ const StartServer = async () => {
 
   await DatabaseConnection();
 
-  // const pubSubService = Container.get(PubSubService);
-  // await pubSubService.createConnection();
+  const pubSubService = Container.get(PubSubService);
+  await pubSubService.createConnection();
 
-  // Container.get(ShoppingService).init(app);
+  Container.get(ShoppingController).init(app);
 
   app.use(express.static(__dirname + '/public'));
   app
@@ -28,7 +31,7 @@ const StartServer = async () => {
       process.exit();
     })
     .on('close', () => {
-      // pubSubService.close();
+      pubSubService.close();
     });
 };
 

@@ -1,7 +1,9 @@
 import mongoose from 'mongoose';
+import { Service } from 'typedi';
 import { ProductModel } from '../models/index.js';
 
 //Dealing with data base operations
+@Service()
 export default class ProductRepository {
   async CreateProduct({
     name,
