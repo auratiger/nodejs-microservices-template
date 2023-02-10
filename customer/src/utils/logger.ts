@@ -1,7 +1,7 @@
 import fs from 'fs';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { createLogger, transports, format, Logger, config } from 'winston';
-import { AppError } from './app-errors';
+import { AppError } from './app-errors.js';
 
 const logDir = 'logs';
 if (!fs.existsSync(logDir)) {
@@ -15,6 +15,17 @@ const colors = _.clone(config.syslog.colors);
 levels.request = _.max(levels) + 1;
 colors.request = 'blue';
 // --
+
+const formatMeta = (meta: any): string => {
+  // You can format the splat yourself
+  const splat: Array<string> = meta[Symbol.for('splat')];
+  if (splat && splat.length) {
+    return splat.length === 1
+      ? JSON.stringify(splat[0])
+      : JSON.stringify(splat);
+  }
+  return '';
+};
 
 // TODO: maybe convert this into a class and inject it with typedi
 const logger: Logger = createLogger({
@@ -48,10 +59,10 @@ const logger: Logger = createLogger({
     format.timestamp({
       format: 'YYYY-MM-DD hh:mm:ss',
     }),
-    format.splat(),
-    format.printf(({ timestamp, level, message }) => {
-      return `[${timestamp}] ${level}: ${message}`;
-    }),
+    format.printf(
+      ({ timestamp, level, message, label = '', ...meta }) =>
+        `[${timestamp}] ${level}\t ${label} ${message} ${formatMeta(meta)}`,
+    ),
   ),
 });
 
@@ -59,7 +70,14 @@ const logger: Logger = createLogger({
 const LogErrors = createLogger({
   transports: [
     new transports.Console(),
-    new transports.File({ filename: 'app_error.log' }),
+    new transports.File({
+      filename: 'app_error.log',
+      dirname: logDir,
+      level: 'error',
+      maxsize: 5242880, //5MB
+      maxFiles: 5,
+      format: format.combine(format.timestamp(), format.json()),
+    }),
   ],
 });
 

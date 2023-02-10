@@ -1,4 +1,4 @@
-import { ValidateSignature } from '../../utils';
+import { ValidateSignature } from '../../utils/index.js';
 
 export default async (req, res, next) => {
   const isAuthorized = await ValidateSignature(req);

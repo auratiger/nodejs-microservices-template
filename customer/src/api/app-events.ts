@@ -1,6 +1,6 @@
-import CustomerService from '../services/customer/CustomerService';
-import Container from 'typedi';
-import logger from '../utils/logger';
+import { Container } from 'typedi';
+import CustomerService from '../services/customer/CustomerService.js';
+import logger from '../utils/logger.js';
 
 export default (app: any) => {
   const customerService = Container.get(CustomerService);

@@ -1,15 +1,11 @@
 {
    "compilerOptions": {
-      "checkJs": false,
-      "target": "es5",
-      "module": "CommonJS",
+      "target": "ES2020",
+      "module": "NodeNext",
+      "moduleResolution": "NodeNext",
       "sourceMap": true,
-      "lib": [
-         "es6"
-      ],
       "allowJs": true,
       "outDir": "build",
-      "rootDir": "src",
       "esModuleInterop": true,
       "types": [
          "node",
@@ -50,5 +46,9 @@
       "dist",
       "coverage",
       "src/**/*.spec.ts"
-   ]
+   ],
+   "ts-node": {
+      "esm": true,
+      "experimentalSpecifierResolution": "node"
+   }
 }

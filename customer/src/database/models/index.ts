@@ -1,2 +1,2 @@
-export { default as CustomerModel } from './Customer';
-export { default as AddressModel } from './Address';
+export { default as CustomerModel } from './Customer.js';
+export { default as AddressModel } from './Address.js';

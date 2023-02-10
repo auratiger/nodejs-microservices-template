@@ -1,13 +1,13 @@
 import { Service } from 'typedi';
-import CustomerRepository from '../../database';
+import CustomerRepository from '../../database/repository/CustomerRepository.js';
 import {
   FormateData,
   GeneratePassword,
   GenerateSalt,
   GenerateSignature,
   ValidatePassword,
-} from '../../utils';
-import logger from '../../utils/logger';
+} from '../../utils/index.js';
+import logger from '../../utils/logger.js';
 
 // All Business logic will be here
 @Service()

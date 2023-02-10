@@ -1,19 +1,22 @@
 import 'reflect-metadata';
 import express from 'express';
-import { PORT } from './config';
-import { CreateChannel } from './utils';
 
-import { databaseConnection } from './database';
-import expressApp from './express-app';
-import logger from './utils/logger';
+import { Container } from 'typedi';
+import { PORT } from './config/index.js';
+import logger from './utils/logger.js';
+import expressApp from './express-app.js';
+import DatabaseConnection from './database/DatabaseConnection.js';
+import PubSubService from './services/pubsub/PubSubService.js';
 
 const startServer = async () => {
   const app = express();
 
-  await databaseConnection();
+  const pubSubService = Container.get(PubSubService);
+  await pubSubService.createConnection();
 
-  const channel = await CreateChannel();
-  await expressApp(app, channel);
+  await DatabaseConnection();
+
+  await expressApp(app);
 
   app
     .listen(PORT, () => {
@@ -24,7 +27,7 @@ const startServer = async () => {
       process.exit();
     })
     .on('close', () => {
-      channel.close();
+      pubSubService.close();
     });
 };
 

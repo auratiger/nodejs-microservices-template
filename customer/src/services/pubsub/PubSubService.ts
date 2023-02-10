@@ -1,7 +1,11 @@
 import amqplib from 'amqplib';
-import { EXCHANGE_NAME, CUSTOMER_SERVICE, HOSTNAME } from '../../config';
+import {
+  EXCHANGE_NAME,
+  CUSTOMER_SERVICE,
+  HOSTNAME,
+} from '../../config/index.js';
 import { Service } from 'typedi';
-import logger from '../../utils/logger';
+import logger from '../../utils/logger.js';
 
 @Service()
 export default class PubSubService {
@@ -13,38 +17,39 @@ export default class PubSubService {
   private subQueue: any = null;
   private offlinePublishReq: any = null;
 
-  createConnection() {
-    amqplib.connect(
-      `amqp://${process.env.RABBITMQ_USERNAME}:${process.env.RABBITMQ_PASSWORD}@${process.env.RABBITMQ_HOSTNAME}:${process.env.RABBITMQ_PORT}?heartbeat=60`,
-      (err: any, conn: any) => {
-        if (err) {
-          logger.error('[AMQP] connection warning: ', err.message);
-          setTimeout(() => {
-            this.createConnection();
-          }, parseInt(process.env.RABBITMQ_TIMEOUT) || 3000);
-          return;
-        }
+  async createConnection() {
+    try {
+      logger.info('[AMQP] connecting to rabbitmq');
+      const conn = await amqplib.connect(
+        `amqp://${process.env.RABBITMQ_USERNAME}:${process.env.RABBITMQ_PASSWORD}@${process.env.RABBITMQ_HOSTNAME}:${process.env.RABBITMQ_PORT}?heartbeat=60`,
+      );
+      logger.info('[AMQP] connected');
 
-        conn.on('error', (err: any) => {
-          if (err.message !== 'Connection closing') {
-            logger.error('[AMQP] conn error', err.message);
-          }
-        });
+      this.amqpConn = conn;
+    } catch (error) {
+      if (error) {
+        logger.error('[AMQP] connection warning: ', error.message);
+        setTimeout(() => {
+          this.createConnection();
+        }, parseInt(process.env.RABBITMQ_TIMEOUT) || 3000);
+        return;
+      }
+    }
 
-        conn.on('close', () => {
-          logger.error('[AMQP] reconnecting');
-          return setTimeout(this.createConnection, 1000);
-        });
+    this.amqpConn.on('error', (err: any) => {
+      if (err.message !== 'Connection closing') {
+        logger.error('[AMQP] conn error', err.message);
+      }
+    });
 
-        logger.info('[AMQP] connected');
-        this.amqpConn = conn;
-        this.createSubscribeChannel(conn);
-      },
-    );
+    this.amqpConn.on('close', () => {
+      logger.error('[AMQP] reconnecting');
+      return setTimeout(this.createConnection, 1000);
+    });
   }
 
-  createSubscribeChannel(conn: any) {
-    conn.createChannel((err: any, ch: any) => {
+  createSubscribeChannel() {
+    this.amqpConn.createChannel((err: any, ch: any) => {
       if (err) {
         logger.error('[AMQP] sub channel error', err);
         return;

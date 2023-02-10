@@ -1,6 +1,6 @@
 import { Service } from 'typedi';
 import mongoose from 'mongoose';
-import { CustomerModel, AddressModel } from '../models';
+import { CustomerModel, AddressModel } from '../models/index.js';
 
 //Dealing with data base operations
 @Service()

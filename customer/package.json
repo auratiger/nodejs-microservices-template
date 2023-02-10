@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "build": "rimraf ./build && NODE_ENV=prod tsc",
-    "dev": "NODE_ENV=dev npx nodemon",
+    "dev": "NODE_ENV=dev nodemon src/index.ts",
     "start": "npm run build && NODE_ENV=prod node build/index.js",
     "lint": "eslint . --ext .ts",
     "prettier-format": "run-script-os",
