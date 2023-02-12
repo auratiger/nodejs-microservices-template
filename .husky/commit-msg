@@ -19,7 +19,7 @@ echo "checking branch name..."
 current_branch="$(git rev-parse --abbrev-ref HEAD)"
 
 # regex to validate branch name
-conventional_branch_regex='^(fix|feat|chore|refactor|improvement|ci|docs|test)\/.*'
+conventional_branch_regex='^((fix|feat|chore|refactor|improvement|ci|docs|test)\/.*)|master'
 branch_error_msg="Aborting commit. Your branch name: '$current_branch' doesn't fit the contributing-guidelines. See: https://gist.github.com/buddiman/628d55d0b08ff0672af5f4c156afeb08"
 
 # Check the branch, if we match
