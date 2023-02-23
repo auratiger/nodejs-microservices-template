@@ -1,6 +1,7 @@
 // All Business logic will be here
 
 import { Service } from 'typedi';
+import { IProduct } from '../../database/models/Product.js';
 import ProductRepository from '../../database/repository/ProductRepository.js';
 import { FormateData } from '../../utils/index.js';
 
@@ -8,10 +9,8 @@ import { FormateData } from '../../utils/index.js';
 export default class ProductService {
   constructor(private readonly productRepository: ProductRepository) {}
 
-  async CreateProduct(productInputs) {
-    const productResult = await this.productRepository.CreateProduct(
-      productInputs,
-    );
+  async CreateProduct(product: IProduct) {
+    const productResult = await this.productRepository.CreateProduct(product);
     return FormateData(productResult);
   }
 
@@ -30,24 +29,25 @@ export default class ProductService {
     });
   }
 
-  async GetProductDescription(productId) {
+  async GetProductDescription(productId: string) {
     const product = await this.productRepository.FindById(productId);
     return FormateData(product);
   }
 
-  async GetProductsByCategory(category) {
-    const products = await this.productRepository.FindByCategory(category);
+  async GetProductsByCategory(category: string) {
+    const products: Array<IProduct> =
+      await this.productRepository.FindByCategory(category);
     return FormateData(products);
   }
 
-  async GetSelectedProducts(selectedIds) {
+  async GetSelectedProducts(selectedIds: Array<string>) {
     const products = await this.productRepository.FindSelectedProducts(
       selectedIds,
     );
     return FormateData(products);
   }
 
-  async GetProductPayload(userId: any, { productId, qty }: any, event: any) {
+  async GetProductPayload(userId: string, { productId, qty }: any, event: any) {
     const product = await this.productRepository.FindById(productId);
 
     if (product) {

@@ -1,5 +1,6 @@
 import { Service } from 'typedi';
 import { CUSTOMER_SERVICE, SHOPPING_SERVICE } from '../config/index.js';
+import { IProduct } from '../database/models/Product.js';
 import ProductService from '../services/products/ProductService.js';
 import PubSubService from '../services/pubsub/PubSubService.js';
 import UserAuth from './middlewares/UserAuth.js';
@@ -13,24 +14,14 @@ export default class ProductController {
 
   public init(app: any): void {
     app.post('/product/create', async (req, res, next) => {
-      const { name, desc, type, unit, price, available, suplier, banner } =
-        req.body;
+      const product: IProduct = req.body;
       // validation
-      const { data } = await this.productService.CreateProduct({
-        name,
-        desc,
-        type,
-        unit,
-        price,
-        available,
-        suplier,
-        banner,
-      });
+      const { data } = await this.productService.CreateProduct(product);
       return res.json(data);
     });
 
     app.get('/category/:type', async (req, res, next) => {
-      const type = req.params.type;
+      const type: string = req.params.type;
 
       try {
         const { data } = await this.productService.GetProductsByCategory(type);
@@ -41,7 +32,7 @@ export default class ProductController {
     });
 
     app.get('/:id', async (req, res, next) => {
-      const productId = req.params.id;
+      const productId: string = req.params.id;
 
       try {
         const { data } = await this.productService.GetProductDescription(

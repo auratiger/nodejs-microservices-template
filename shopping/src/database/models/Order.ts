@@ -1,8 +1,14 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 
-const Schema = mongoose.Schema;
+export interface IOrder extends Document {
+  orderId: string;
+  customerId: string;
+  amount: number;
+  status: string;
+  items: [];
+}
 
-const OrderSchema = new Schema(
+const OrderSchema: Schema = new Schema(
   {
     orderId: { type: String },
     customerId: { type: String },
@@ -34,4 +40,4 @@ const OrderSchema = new Schema(
   },
 );
 
-export default mongoose.model('order', OrderSchema);
+export default mongoose.model<IOrder>('order', OrderSchema);

@@ -7,7 +7,6 @@ import { PORT } from './config/index.js';
 import logger from './utils/logger.js';
 import DatabaseConnection from './database/DatabaseConnection.js';
 import PubSubService from './services/pubsub/PubSubService.js';
-import appEvents from './api/app-events.js';
 import CustomerController from './api/CustomerController.js';
 
 const startServer = async () => {
@@ -22,9 +21,7 @@ const startServer = async () => {
 
   await DatabaseConnection();
 
-  //api
-  appEvents(app);
-  app.use(express.static(__dirname + '/public'));
+  // app.use(express.static(__dirname + '/public'));
 
   app
     .listen(PORT, () => {

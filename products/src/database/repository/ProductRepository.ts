@@ -1,34 +1,15 @@
 import mongoose from 'mongoose';
 import { Service } from 'typedi';
 import { ProductModel } from '../models/index.js';
+import { IProduct } from '../models/Product.js';
 
 //Dealing with data base operations
 @Service()
 export default class ProductRepository {
-  async CreateProduct({
-    name,
-    desc,
-    type,
-    unit,
-    price,
-    available,
-    suplier,
-    banner,
-  }) {
-    const product = new ProductModel({
-      name,
-      desc,
-      type,
-      unit,
-      price,
-      available,
-      suplier,
-      banner,
-    });
+  async CreateProduct(product: IProduct): Promise<IProduct> {
+    const newProduct: IProduct = new ProductModel(product);
 
-    //    return await ProductModel.findByIdAndDelete('607286419f4a1007c1fa7f40');
-
-    const productResult = await product.save();
+    const productResult = await newProduct.save();
     return productResult;
   }
 
@@ -36,18 +17,22 @@ export default class ProductRepository {
     return await ProductModel.find();
   }
 
-  async FindById(id) {
+  async FindById(id: string): Promise<IProduct> {
     return await ProductModel.findById(id);
   }
 
-  async FindByCategory(category) {
-    const products = await ProductModel.find({ type: category });
+  async FindByCategory(category: string): Promise<Array<IProduct>> {
+    const products: Array<IProduct> = await ProductModel.find({
+      type: category,
+    });
 
     return products;
   }
 
-  async FindSelectedProducts(selectedIds) {
-    const products = await ProductModel.find()
+  async FindSelectedProducts(
+    selectedIds: Array<string>,
+  ): Promise<Array<IProduct>> {
+    const products: Array<IProduct> = await ProductModel.find()
       .where('_id')
       .in(selectedIds.map((_id) => _id))
       .exec();

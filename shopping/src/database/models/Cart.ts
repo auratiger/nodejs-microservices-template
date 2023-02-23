@@ -1,8 +1,11 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 
-const Schema = mongoose.Schema;
+export interface ICart extends Document {
+  customerId: string;
+  items: Array<any>;
+}
 
-const CartSchema = new Schema({
+const CartSchema: Schema = new Schema({
   customerId: { type: String },
   items: [
     {
@@ -21,4 +24,4 @@ const CartSchema = new Schema({
   ],
 });
 
-export default mongoose.model('cart', CartSchema);
+export default mongoose.model<ICart>('cart', CartSchema);

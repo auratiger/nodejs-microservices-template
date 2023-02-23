@@ -12,28 +12,26 @@ export default class ShoppingService {
     return FormateData(cartItems);
   }
 
-  async PlaceOrder(userInput) {
-    const { _id, txnNumber } = userInput;
-
+  async PlaceOrder(userId: string, txnNumber: string) {
     const orderResult = await this.shoppingRepository.CreateNewOrder(
-      _id,
+      userId,
       txnNumber,
     );
 
     return FormateData(orderResult);
   }
 
-  async GetOrders(customerId) {
+  async GetOrders(customerId: string) {
     const orders = await this.shoppingRepository.Orders(customerId);
     return FormateData(orders);
   }
 
-  async GetOrderDetails(productId, { _id, orderId }) {
+  async GetOrderDetails(productId: string, { _id, orderId }) {
     const orders = await this.shoppingRepository.Orders(productId);
     return FormateData(orders);
   }
 
-  async ManageCart(customerId, item, qty, isRemove) {
+  async ManageCart(customerId: string, item, qty, isRemove) {
     const cartResult = await this.shoppingRepository.AddCartItem(
       customerId,
       item,
@@ -60,7 +58,7 @@ export default class ShoppingService {
     }
   }
 
-  async GetOrderPayload(userId, order, event) {
+  async GetOrderPayload(userId: string, order: any, event: any) {
     if (order) {
       const payload = {
         event: event,

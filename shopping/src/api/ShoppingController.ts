@@ -18,10 +18,7 @@ export default class ShoppingController {
       const { _id } = req.user;
       const { txnNumber } = req.body;
 
-      const { data } = await this.shoppingService.PlaceOrder({
-        _id,
-        txnNumber,
-      });
+      const { data } = await this.shoppingService.PlaceOrder(_id, txnNumber);
 
       const payload = await this.shoppingService.GetOrderPayload(
         _id,

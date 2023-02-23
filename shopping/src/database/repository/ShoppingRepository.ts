@@ -2,17 +2,18 @@ import mongoose from 'mongoose';
 import { Service } from 'typedi';
 import { CartModel, OrderModel } from '../models/index.js';
 import { v4 as uuidv4 } from 'uuid';
+import { ICart } from '../models/Cart.js';
 
 //Dealing with data base operations
 @Service()
 export default class ShoppingRepository {
-  async Orders(customerId) {
+  async Orders(customerId: string) {
     const orders = await OrderModel.find({ customerId });
 
     return orders;
   }
 
-  async Cart(customerId) {
+  async Cart(customerId: string) {
     const cartItems = await CartModel.find({ customerId: customerId });
 
     if (cartItems) {
@@ -22,17 +23,22 @@ export default class ShoppingRepository {
     throw new Error('Data Not found!');
   }
 
-  async AddCartItem(customerId, item, qty, isRemove) {
+  async AddCartItem(
+    customerId: string,
+    item: any,
+    qty: any,
+    isRemove: boolean,
+  ) {
     // return await CartModel.deleteMany();
 
-    const cart = await CartModel.findOne({ customerId: customerId });
+    const cart: ICart = await CartModel.findOne({ customerId: customerId });
 
     const { _id } = item;
 
     if (cart) {
       let isExist = false;
 
-      let cartItems = cart.items;
+      const cartItems: Array<any> = cart.items;
 
       if (cartItems.length > 0) {
         cartItems.map((item: any) => {
@@ -62,15 +68,15 @@ export default class ShoppingRepository {
     }
   }
 
-  async CreateNewOrder(customerId, txnId) {
+  async CreateNewOrder(customerId: string, txnId: string) {
     //required to verify payment through TxnId
 
-    const cart = await CartModel.findOne({ customerId: customerId });
+    const cart: ICart = await CartModel.findOne({ customerId: customerId });
 
     if (cart) {
       let amount = 0;
 
-      let cartItems = cart.items;
+      const cartItems = cart.items;
 
       if (cartItems.length > 0) {
         //process Order
