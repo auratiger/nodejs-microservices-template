@@ -1,12 +1,6 @@
 import { Service } from 'typedi';
 import CustomerRepository from '../../database/repository/CustomerRepository.js';
-import {
-  FormateData,
-  GeneratePassword,
-  GenerateSalt,
-  GenerateSignature,
-  ValidatePassword,
-} from '../../utils/utils.js';
+import { FormateData, GeneratePassword, GenerateSalt, GenerateSignature, ValidatePassword } from '../../utils/utils.js';
 import logger from '../../utils/logger.js';
 import { ICustomer, ILogin, ISignUp } from '../../database/models/Customer.js';
 import { IAddress } from '../../database/models/Address.js';
@@ -17,9 +11,7 @@ export default class CustomerService {
   constructor(private readonly customerRepository: CustomerRepository) {}
 
   async Login(userInputs: ILogin) {
-    const existingCustomer = await this.customerRepository.FindCustomer(
-      userInputs.email,
-    );
+    const existingCustomer = await this.customerRepository.FindCustomer(userInputs.email);
 
     if (existingCustomer) {
       const validPassword = await ValidatePassword(
@@ -64,24 +56,18 @@ export default class CustomerService {
 
   async AddNewAddress(userId: string, address: IAddress) {
     // TODO: what happens if address exists
-    const addressResult = await this.customerRepository.CreateAddress(
-      userId,
-      address,
-    );
+    const addressResult = await this.customerRepository.CreateAddress(userId, address);
 
     return FormateData(addressResult);
   }
 
   async GetProfile(userId: string) {
-    const existingCustomer: ICustomer =
-      await this.customerRepository.FindCustomerById(userId);
+    const existingCustomer: ICustomer = await this.customerRepository.FindCustomerById(userId);
     return FormateData(existingCustomer);
   }
 
   async GetShopingDetails(userId: string) {
-    const existingCustomer = await this.customerRepository.FindCustomerById(
-      userId,
-    );
+    const existingCustomer = await this.customerRepository.FindCustomerById(userId);
 
     if (existingCustomer) {
       return FormateData(existingCustomer);
@@ -90,40 +76,22 @@ export default class CustomerService {
   }
 
   async GetWishList(customerId: string) {
-    const wishListItems = await this.customerRepository.GetCustomerWishlist(
-      customerId,
-    );
+    const wishListItems = await this.customerRepository.GetCustomerWishlist(customerId);
     return FormateData(wishListItems);
   }
 
   async AddToWishlist(customerId: string, product: any) {
-    const wishlistResult = await this.customerRepository.AddWishlistItem(
-      customerId,
-      product,
-    );
+    const wishlistResult = await this.customerRepository.AddWishlistItem(customerId, product);
     return FormateData(wishlistResult);
   }
 
-  async ManageCart(
-    customerId: string,
-    product: any,
-    qty: any,
-    isRemove: boolean,
-  ) {
-    const cartResult = await this.customerRepository.AddCartItem(
-      customerId,
-      product,
-      qty,
-      isRemove,
-    );
+  async ManageCart(customerId: string, product: any, qty: any, isRemove: boolean) {
+    const cartResult = await this.customerRepository.AddCartItem(customerId, product, qty, isRemove);
     return FormateData(cartResult);
   }
 
   async ManageOrder(customerId: string, order: any) {
-    const orderResult = await this.customerRepository.AddOrderToProfile(
-      customerId,
-      order,
-    );
+    const orderResult = await this.customerRepository.AddOrderToProfile(customerId, order);
     return FormateData(orderResult);
   }
 

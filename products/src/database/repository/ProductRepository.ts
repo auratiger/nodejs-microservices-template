@@ -29,9 +29,7 @@ export default class ProductRepository {
     return products;
   }
 
-  async FindSelectedProducts(
-    selectedIds: Array<string>,
-  ): Promise<Array<IProduct>> {
+  async FindSelectedProducts(selectedIds: Array<string>): Promise<Array<IProduct>> {
     const products: Array<IProduct> = await ProductModel.find()
       .where('_id')
       .in(selectedIds.map((_id) => _id))

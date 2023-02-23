@@ -6,10 +6,7 @@ import UserAuth from './middlewares/UserAuth.js';
 
 @Service()
 export default class ShoppingController {
-  constructor(
-    private readonly shoppingService: ShoppingService,
-    private readonly pubSubService: PubSubService,
-  ) {}
+  constructor(private readonly shoppingService: ShoppingService, private readonly pubSubService: PubSubService) {}
 
   public init(app: any): void {
     // NOTE: SubscribeMessage(channel, service);
@@ -20,16 +17,9 @@ export default class ShoppingController {
 
       const { data } = await this.shoppingService.PlaceOrder(_id, txnNumber);
 
-      const payload = await this.shoppingService.GetOrderPayload(
-        _id,
-        data,
-        'CREATE_ORDER',
-      );
+      const payload = await this.shoppingService.GetOrderPayload(_id, data, 'CREATE_ORDER');
 
-      this.pubSubService.publishMessage(
-        CUSTOMER_SERVICE,
-        JSON.stringify(payload),
-      );
+      this.pubSubService.publishMessage(CUSTOMER_SERVICE, JSON.stringify(payload));
 
       res.status(200).json(data);
     });

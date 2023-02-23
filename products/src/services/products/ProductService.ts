@@ -35,15 +35,12 @@ export default class ProductService {
   }
 
   async GetProductsByCategory(category: string) {
-    const products: Array<IProduct> =
-      await this.productRepository.FindByCategory(category);
+    const products: Array<IProduct> = await this.productRepository.FindByCategory(category);
     return FormateData(products);
   }
 
   async GetSelectedProducts(selectedIds: Array<string>) {
-    const products = await this.productRepository.FindSelectedProducts(
-      selectedIds,
-    );
+    const products = await this.productRepository.FindSelectedProducts(selectedIds);
     return FormateData(products);
   }
 

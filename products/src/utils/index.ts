@@ -12,11 +12,7 @@ export const GeneratePassword = async (password, salt) => {
   return await bcrypt.hash(password, salt);
 };
 
-export const ValidatePassword = async (
-  enteredPassword: string,
-  savedPassword: string,
-  salt: string,
-) => {
+export const ValidatePassword = async (enteredPassword: string, savedPassword: string, salt: string) => {
   return (await GeneratePassword(enteredPassword, salt)) === savedPassword;
 };
 

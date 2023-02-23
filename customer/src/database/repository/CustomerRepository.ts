@@ -51,10 +51,7 @@ export default class CustomerRepository {
     return profile.wishlist;
   }
 
-  async AddWishlistItem(
-    customerId: string,
-    { _id, name, desc, price, available, banner },
-  ) {
+  async AddWishlistItem(customerId: string, { _id, name, desc, price, available, banner }) {
     const product: any = {
       _id,
       name,
@@ -64,9 +61,7 @@ export default class CustomerRepository {
       banner,
     };
 
-    const profile: ICustomer = await CustomerModel.findById(
-      customerId,
-    ).populate('wishlist');
+    const profile: ICustomer = await CustomerModel.findById(customerId).populate('wishlist');
 
     if (profile) {
       const wishlist: Array<any> = profile.wishlist;
@@ -96,15 +91,8 @@ export default class CustomerRepository {
     return profileResult.wishlist;
   }
 
-  async AddCartItem(
-    customerId: string,
-    { _id, name, price, banner },
-    qty: any,
-    isRemove: boolean,
-  ) {
-    const profile: ICustomer = await CustomerModel.findById(
-      customerId,
-    ).populate('cart');
+  async AddCartItem(customerId: string, { _id, name, price, banner }, qty: any, isRemove: boolean) {
+    const profile: ICustomer = await CustomerModel.findById(customerId).populate('cart');
 
     if (profile) {
       const cartItem = {

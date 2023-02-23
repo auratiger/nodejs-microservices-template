@@ -23,12 +23,7 @@ export default class ShoppingRepository {
     throw new Error('Data Not found!');
   }
 
-  async AddCartItem(
-    customerId: string,
-    item: any,
-    qty: any,
-    isRemove: boolean,
-  ) {
+  async AddCartItem(customerId: string, item: any, qty: any, isRemove: boolean) {
     // return await CartModel.deleteMany();
 
     const cart: ICart = await CartModel.findOne({ customerId: customerId });

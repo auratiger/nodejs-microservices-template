@@ -13,10 +13,7 @@ export default class ShoppingService {
   }
 
   async PlaceOrder(userId: string, txnNumber: string) {
-    const orderResult = await this.shoppingRepository.CreateNewOrder(
-      userId,
-      txnNumber,
-    );
+    const orderResult = await this.shoppingRepository.CreateNewOrder(userId, txnNumber);
 
     return FormateData(orderResult);
   }
@@ -32,12 +29,7 @@ export default class ShoppingService {
   }
 
   async ManageCart(customerId: string, item, qty, isRemove) {
-    const cartResult = await this.shoppingRepository.AddCartItem(
-      customerId,
-      item,
-      qty,
-      isRemove,
-    );
+    const cartResult = await this.shoppingRepository.AddCartItem(customerId, item, qty, isRemove);
     return FormateData(cartResult);
   }
 

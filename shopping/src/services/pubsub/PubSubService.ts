@@ -1,9 +1,5 @@
 import amqplib from 'amqplib';
-import {
-  EXCHANGE_NAME,
-  CUSTOMER_SERVICE,
-  HOSTNAME,
-} from '../../config/index.js';
+import { EXCHANGE_NAME, CUSTOMER_SERVICE, HOSTNAME } from '../../config/index.js';
 import { Service } from 'typedi';
 import logger from '../../utils/logger.js';
 
@@ -186,11 +182,7 @@ export default class PubSubService {
 
       this.addToOfflineQueue(this.offlineSubReq, service, handler);
       if (this.subChannel && this.subQueue) {
-        this.subChannel.bindQueue(
-          this.subQueue,
-          EXCHANGE_NAME,
-          CUSTOMER_SERVICE,
-        );
+        this.subChannel.bindQueue(this.subQueue, EXCHANGE_NAME, CUSTOMER_SERVICE);
         // NOTE: this.subChannel.bindQueue(this.subQueue, EXCHANGE_NAME, service);
         logger.debug(`[*] Waiting for messages on service:${service}`);
         // } else {
@@ -199,9 +191,7 @@ export default class PubSubService {
 
       // eventEmitter.emit(INTERNAL_EVENTS_CHANNELS.SUBSCRIBE_TO_TOPIC, { service });
     } catch (ex) {
-      logger.error(
-        `PubSub>>subscribe: service:${service}. Error:${ex.message}. Stack:${ex.stack}`,
-      );
+      logger.error(`PubSub>>subscribe: service:${service}. Error:${ex.message}. Stack:${ex.stack}`);
     }
   }
 
@@ -221,9 +211,7 @@ export default class PubSubService {
         logger.debug(`[*] unsubscribed from service:${service}`);
       }
     } catch (ex) {
-      logger.error(
-        `PubSub>>unsubscribe: service:${service}. Error:${ex.message}. Stack:${ex.stack}`,
-      );
+      logger.error(`PubSub>>unsubscribe: service:${service}. Error:${ex.message}. Stack:${ex.stack}`);
     }
   }
 }
