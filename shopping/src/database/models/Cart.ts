@@ -5,6 +5,8 @@ export interface ICart extends Document {
   items: Array<any>;
 }
 
+export type Cart = ICart | null;
+
 const CartSchema: Schema = new Schema({
   customerId: { type: String },
   items: [
