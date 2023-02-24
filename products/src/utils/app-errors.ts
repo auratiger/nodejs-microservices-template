@@ -26,6 +26,7 @@ export class AppError extends Error {
     Object.setPrototypeOf(this, new.target.prototype);
     this.name = name;
     this.statusCode = statusCode;
+    this.description = description;
     this.isOperational = isOperational;
     this.errorStack = errorStack;
     this.logingErrorResponse = logingErrorResponse;

@@ -1,13 +1,12 @@
-import mongoose from 'mongoose';
 import { Service } from 'typedi';
 import { ProductModel } from '../models/index.js';
-import { IProduct } from '../models/Product.js';
+import { Product } from '../models/Product.js';
 
 //Dealing with data base operations
 @Service()
 export default class ProductRepository {
-  async CreateProduct(product: IProduct): Promise<IProduct> {
-    const newProduct: IProduct = new ProductModel(product);
+  async CreateProduct(product: Product): Promise<Product> {
+    const newProduct: Product = new ProductModel(product);
 
     const productResult = await newProduct.save();
     return productResult;
@@ -17,20 +16,20 @@ export default class ProductRepository {
     return await ProductModel.find();
   }
 
-  async FindById(id: string): Promise<IProduct> {
+  async FindById(id: string): Promise<Product> {
     return await ProductModel.findById(id);
   }
 
-  async FindByCategory(category: string): Promise<Array<IProduct>> {
-    const products: Array<IProduct> = await ProductModel.find({
+  async FindByCategory(category: string): Promise<Array<Product>> {
+    const products: Array<Product> = await ProductModel.find({
       type: category,
     });
 
     return products;
   }
 
-  async FindSelectedProducts(selectedIds: Array<string>): Promise<Array<IProduct>> {
-    const products: Array<IProduct> = await ProductModel.find()
+  async FindSelectedProducts(selectedIds: Array<string>): Promise<Array<Product>> {
+    const products: Array<Product> = await ProductModel.find()
       .where('_id')
       .in(selectedIds.map((_id) => _id))
       .exec();
