@@ -3,6 +3,9 @@
 
 # Allowed files and directories
 !/src
+!/.eslint*
+!/.prettierrc
+!/tsconfig.json
 !/package*.json
 
 # Ignore unnecessary files inside allowed directories
@@ -11,4 +14,3 @@
 **/*.log
 **/.DS_Store
 **/Thumbs.db
-

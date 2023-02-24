@@ -5,25 +5,44 @@
 ARG NODE_VERSION=18.12.1
 ARG STAGING_DIR=/app/shopping
 
-# Build Stage 0
+# --- Build Stage 0 --- 
+# This stage is responsible for building the project
+#
+FROM node:${NODE_VERSION} as build
+
+# NOTE: An ARG instruction goes out of scope at the end of the build stage where it was defined.
+# To use an ARG in multiple stages, each stage must include the ARG instruction.
+ARG STAGING_DIR
+WORKDIR ${STAGING_DIR}
+
+COPY package*.json ./
+COPY . .
+RUN npm ci && npm run build
+
+# --- Build Stage 1 --- 
 # This build installs and caches the container node_modules
 #
 FROM node:${NODE_VERSION} AS deps
+
+ARG STAGING_DIR
 WORKDIR ${STAGING_DIR}
 
 COPY package*.json ./
 RUN npm ci --only=production
 
-# Build Stage 1
-# This build takes the staging dependencies
+# --- Build Stage 2 --- 
+# This build pulls the cached dependencies and cached build and runs the project
 #
 FROM node:${NODE_VERSION}-alpine AS prod
 
 ARG USER=someuser
+
+ARG STAGING_DIR
 WORKDIR /home/${USER}
 
 COPY . .
 COPY --from=deps ${STAGING_DIR}/node_modules ./node_modules
+COPY --from=build ${STAGING_DIR}/build ./build
 
 # Create a non-root user and set ownership and permissions as required
 RUN deluser --remove-home node \

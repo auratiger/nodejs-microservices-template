@@ -8,7 +8,6 @@ export const PORT: number = parseInt(process.env.PORT as string);
 export const DB_URL = process.env.MONGODB_URI as string;
 export const APP_SECRET = process.env.APP_SECRET as string;
 export const EXCHANGE_NAME = process.env.EXCHANGE_NAME as string;
-export const MSG_QUEUE_URL = process.env.MSG_QUEUE_URL as string;
 export const HOSTNAME = process.env.HOSTNAME as string;
 export const CUSTOMER_SERVICE = 'customer_service';
 export const SHOPPING_SERVICE = 'shopping_service';
