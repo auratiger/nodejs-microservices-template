@@ -12,7 +12,7 @@ export interface IProduct extends Document {
 }
 
 const ProductSchema: Schema = new Schema({
-  name: String,
+  name: { type: String, unique: true },
   desc: String,
   banner: String,
   type: String,

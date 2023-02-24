@@ -32,10 +32,8 @@ services:
   base-mongo:
     image: mongo:latest
     restart: on-failure
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin_user
-      - MONGO_INITDB_ROOT_PASSWORD=admin_pass
-      - MONGO_INITDB_DATABASE=database
+    env_file:
+      - ./mongodb/.env
     volumes:
       - ./mongodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     healthcheck:

@@ -19,7 +19,7 @@ export type ISignUp = Pick<ICustomer, 'email' | 'password' | 'phone'>;
 const CustomerSchema: Schema = new Schema(
   {
     name: String,
-    email: String,
+    email: { type: String, unique: true },
     password: String,
     salt: String,
     phone: String,
