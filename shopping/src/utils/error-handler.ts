@@ -1,6 +1,7 @@
 import logger, { ErrorLogger } from './logger.js';
+import { Request, Response, NextFunction } from 'express';
 
-const ErrorHandler = async (err, req, res, next) => {
+const ErrorHandler = async (err, req: Request, res: Response, next: NextFunction) => {
   const errorLogger = new ErrorLogger();
 
   process.on('uncaughtException', (reason, promise) => {

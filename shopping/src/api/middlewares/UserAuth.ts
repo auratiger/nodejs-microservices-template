@@ -1,6 +1,7 @@
-import { ValidateSignature } from '../../utils/index.js';
+import { Request, Response, NextFunction } from 'express';
+import { ValidateSignature } from '../../utils/utils.js';
 
-export default async (req, res, next) => {
+export default async (req: Request, res: Response, next: NextFunction) => {
   const isAuthorized = await ValidateSignature(req);
 
   if (isAuthorized) {

@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import express from 'express';
+import express, { Express } from 'express';
 
 import cors from 'cors';
 import { Container } from 'typedi';
@@ -10,7 +10,7 @@ import PubSubService from './services/pubsub/PubSubService.js';
 import CustomerController from './api/CustomerController.js';
 
 const startServer = async () => {
-  const app = express();
+  const app: Express = express();
   app.use(express.json());
   app.use(cors());
 

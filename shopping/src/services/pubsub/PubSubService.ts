@@ -1,4 +1,4 @@
-import amqplib from 'amqplib';
+import amqplib, { Connection, ConfirmChannel, Channel, Message } from 'amqplib';
 import {
   EXCHANGE_NAME,
   CUSTOMER_SERVICE,
@@ -14,9 +14,9 @@ import logger from '../../utils/logger.js';
 
 @Service()
 export default class PubSubService {
-  private amqpConn: any = null;
-  private subChannel: any = null;
-  private pubChannel: any = null;
+  private amqpConn: Connection | null = null;
+  private subChannel: Channel | null = null;
+  private pubChannel: ConfirmChannel | null = null;
   private subList: Map<string, () => void> = new Map();
   private offlineSubReq: any = null;
   private subQueue: any = null;
@@ -41,7 +41,7 @@ export default class PubSubService {
       }
     }
 
-    this.amqpConn.on('error', (err: any) => {
+    this.amqpConn.on('error', (err: Error) => {
       if (err.message !== 'Connection closing') {
         logger.error('[AMQP] conn error', err.message);
       }
@@ -54,7 +54,7 @@ export default class PubSubService {
   }
 
   createSubscribeChannel() {
-    this.amqpConn.createChannel((err: any, ch: any) => {
+    this.amqpConn.createChannel((err: Error, ch: Channel) => {
       if (err) {
         logger.error('[AMQP] sub channel error', err);
         return;
@@ -65,7 +65,7 @@ export default class PubSubService {
         return;
       }
 
-      ch.on('error', (err: any) => {
+      ch.on('error', (err: Error) => {
         logger.error('[AMQP] sub channel error', err);
         this.reConnect();
       });
@@ -86,7 +86,7 @@ export default class PubSubService {
     logger.debug('Pubsub>>consumeMessages registered');
     this.subChannel.consume(
       this.subQueue,
-      (msg: any) => {
+      (msg: Message) => {
         // eslint-disable-line max-statements, complexity
         if (!msg?.content) {
           return;
@@ -99,7 +99,7 @@ export default class PubSubService {
   }
 
   createPublishChannel() {
-    this.amqpConn.createConfirmChannel((err: any, ch: any) => {
+    this.amqpConn.createConfirmChannel((err: Error, ch: Channel) => {
       if (err) {
         logger.error('[AMQP] pub channel error', err.message);
         return;
@@ -110,7 +110,7 @@ export default class PubSubService {
         return;
       }
 
-      ch.on('error', (err: any) => {
+      ch.on('error', (err: Error) => {
         logger.error('[AMQP] pub channel error', err.message);
         this.reConnect();
       });
@@ -161,7 +161,7 @@ export default class PubSubService {
         service,
         msg,
         { appId: HOSTNAME, type: 'json', ...options },
-        (err: any, ok: any) => {
+        (err: Error, ok: any) => {
           if (err) {
             logger.error('[AMQP] publish: ', err);
           }

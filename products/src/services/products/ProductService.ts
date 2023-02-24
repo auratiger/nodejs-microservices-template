@@ -3,7 +3,7 @@
 import { Service } from 'typedi';
 import { Product } from '../../database/models/Product.js';
 import ProductRepository from '../../database/repository/ProductRepository.js';
-import { FormateData } from '../../utils/index.js';
+import { FormateData } from '../../utils/utils.js';
 
 @Service()
 export default class ProductService {

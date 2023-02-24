@@ -1,4 +1,5 @@
 import { Service } from 'typedi';
+import { Express, Request, Response, NextFunction } from 'express';
 import { CUSTOMER_SERVICE, SHOPPING_SERVICE } from '../config/index.js';
 import { IProduct } from '../database/models/Product.js';
 import ProductService from '../services/products/ProductService.js';
@@ -9,15 +10,15 @@ import UserAuth from './middlewares/UserAuth.js';
 export default class ProductController {
   constructor(private readonly productService: ProductService, private readonly pubSubService: PubSubService) {}
 
-  public init(app: any): void {
-    app.post('/product/create', async (req, res, next) => {
+  public init(app: Express): void {
+    app.post('/product/create', async (req: Request, res: Response, next: NextFunction) => {
       const product: IProduct = req.body;
       // validation
       const { data } = await this.productService.CreateProduct(product);
       return res.json(data);
     });
 
-    app.get('/category/:type', async (req, res, next) => {
+    app.get('/category/:type', async (req: Request, res: Response, next: NextFunction) => {
       const type: string = req.params.type;
 
       try {
@@ -28,7 +29,7 @@ export default class ProductController {
       }
     });
 
-    app.get('/:id', async (req, res, next) => {
+    app.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
       const productId: string = req.params.id;
 
       try {
@@ -39,14 +40,14 @@ export default class ProductController {
       }
     });
 
-    app.post('/ids', async (req, res, next) => {
+    app.post('/ids', async (req: Request, res: Response, next: NextFunction) => {
       const { ids } = req.body;
       const products = await this.productService.GetSelectedProducts(ids);
       return res.status(200).json(products);
     });
 
-    app.put('/wishlist', UserAuth, async (req, res, next) => {
-      const { _id } = req.user;
+    app.put('/wishlist', UserAuth, async (req: Request, res: Response, next: NextFunction) => {
+      const { _id } = req.body._user;
 
       const { data } = await this.productService.GetProductPayload(_id, { productId: req.body._id }, 'ADD_TO_WISHLIST');
 
@@ -55,8 +56,8 @@ export default class ProductController {
       res.status(200).json(data.data.product);
     });
 
-    app.delete('/wishlist/:id', UserAuth, async (req, res, next) => {
-      const { _id } = req.user;
+    app.delete('/wishlist/:id', UserAuth, async (req: Request, res: Response, next: NextFunction) => {
+      const { _id } = req.body._user;
       const productId = req.params.id;
 
       const { data } = await this.productService.GetProductPayload(_id, { productId }, 'REMOVE_FROM_WISHLIST');
@@ -65,8 +66,8 @@ export default class ProductController {
       res.status(200).json(data.data.product);
     });
 
-    app.put('/cart', UserAuth, async (req, res, next) => {
-      const { _id } = req.user;
+    app.put('/cart', UserAuth, async (req: Request, res: Response, next: NextFunction) => {
+      const { _id } = req.body._user;
 
       const { data } = await this.productService.GetProductPayload(
         _id,
@@ -82,8 +83,8 @@ export default class ProductController {
       res.status(200).json(response);
     });
 
-    app.delete('/cart/:id', UserAuth, async (req, res, next) => {
-      const { _id } = req.user;
+    app.delete('/cart/:id', UserAuth, async (req: Request, res: Response, next: NextFunction) => {
+      const { _id } = req.body._user;
       const productId = req.params.id;
 
       const { data } = await this.productService.GetProductPayload(_id, { productId }, 'REMOVE_FROM_CART');
@@ -96,12 +97,12 @@ export default class ProductController {
       res.status(200).json(response);
     });
 
-    app.get('/whoami', (req, res, next) => {
+    app.get('/whoami', (req: Request, res: Response, next: NextFunction) => {
       return res.status(200).json({ msg: '/ or /products : I am products Service' });
     });
 
     //get Top products and category
-    app.get('/', async (req, res, next) => {
+    app.get('/', async (req: Request, res: Response, next: NextFunction) => {
       //check validation
       try {
         const { data } = await this.productService.GetProducts();

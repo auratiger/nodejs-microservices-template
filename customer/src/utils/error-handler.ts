@@ -1,9 +1,10 @@
 import logger, { ErrorLogger } from './logger.js';
+import { Request, Response, NextFunction } from 'express';
 
-const ErrorHandler = async (err, req, res, next) => {
+const ErrorHandler = async (err: any, req: Request, res: Response, next: NextFunction): Promise<any> => {
   const errorLogger = new ErrorLogger();
 
-  process.on('uncaughtException', (reason, promise) => {
+  process.on('uncaughtException', (reason, promise: Promise<any>) => {
     logger.info(`${reason}, 'UNHANDLED'`);
     throw reason; // need to take care
   });

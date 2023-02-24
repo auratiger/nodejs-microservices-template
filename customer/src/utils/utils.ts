@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { Request } from 'express';
 
 import { APP_SECRET } from '../config/index.js';
 import logger from './logger.js';
@@ -26,12 +27,19 @@ export const GenerateSignature = async (payload) => {
   }
 };
 
-export const ValidateSignature = async (req) => {
+export const ValidateSignature = async (req: Request) => {
   try {
     const signature = req.get('Authorization');
+
+    if (!signature) {
+      logger.error('[Customer]: signature not present');
+      throw Error;
+    }
+
     logger.info(signature);
     const payload = await jwt.verify(signature.split(' ')[1], APP_SECRET);
-    req.user = payload;
+    req.body._user = payload;
+
     return true;
   } catch (error) {
     logger.info(error);
@@ -39,7 +47,7 @@ export const ValidateSignature = async (req) => {
   }
 };
 
-export const FormateData = (data) => {
+export const FormateData = (data: any) => {
   if (data) {
     return { data };
   } else {
