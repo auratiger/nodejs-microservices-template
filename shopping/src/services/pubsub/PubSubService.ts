@@ -1,5 +1,14 @@
 import amqplib from 'amqplib';
-import { EXCHANGE_NAME, CUSTOMER_SERVICE, HOSTNAME } from '../../config/index.js';
+import {
+  EXCHANGE_NAME,
+  CUSTOMER_SERVICE,
+  HOSTNAME,
+  RABBITMQ_USERNAME,
+  RABBITMQ_PASSWORD,
+  RABBITMQ_HOSTNAME,
+  RABBITMQ_PORT,
+  RABBITMQ_TIMEOUT,
+} from '../../config/index.js';
 import { Service } from 'typedi';
 import logger from '../../utils/logger.js';
 
@@ -17,17 +26,17 @@ export default class PubSubService {
     try {
       logger.info('[AMQP] connecting to rabbitmq');
       const conn = await amqplib.connect(
-        `amqp://${process.env.RABBITMQ_USERNAME}:${process.env.RABBITMQ_PASSWORD}@${process.env.RABBITMQ_HOSTNAME}:${process.env.RABBITMQ_PORT}?heartbeat=60`,
+        `amqp://${RABBITMQ_USERNAME}:${RABBITMQ_PASSWORD}@${RABBITMQ_HOSTNAME}:${RABBITMQ_PORT}?heartbeat=60`,
       );
       logger.info('[AMQP] connected');
 
       this.amqpConn = conn;
-    } catch (error) {
-      if (error) {
-        logger.error('[AMQP] connection warning: ', error.message);
+    } catch (err: any) {
+      if (err) {
+        logger.error('[AMQP] connection warning: ', err.message);
         setTimeout(() => {
           this.createConnection();
-        }, parseInt(process.env.RABBITMQ_TIMEOUT) || 3000);
+        }, RABBITMQ_TIMEOUT || 3000);
         return;
       }
     }
@@ -130,8 +139,8 @@ export default class PubSubService {
       if (this.pubChannel) this.pubChannel.removeAllListeners();
       if (this.amqpConn) this.amqpConn.close();
       logger.info('Closed connection.');
-    } catch (ex) {
-      logger.error('PubSub>>close. Error: ', ex.message, '. Stack: ', ex.stack);
+    } catch (err: any) {
+      logger.error('PubSub>>close. Error: ', err.message, '. Stack: ', err.stack);
     }
   }
 
@@ -158,8 +167,8 @@ export default class PubSubService {
           }
         },
       );
-    } catch (e) {
-      logger.error('[AMQP] publish error: ', e.message);
+    } catch (err: any) {
+      logger.error('[AMQP] publish error: ', err.message);
     }
   }
 
@@ -190,8 +199,8 @@ export default class PubSubService {
       }
 
       // eventEmitter.emit(INTERNAL_EVENTS_CHANNELS.SUBSCRIBE_TO_TOPIC, { service });
-    } catch (ex) {
-      logger.error(`PubSub>>subscribe: service:${service}. Error:${ex.message}. Stack:${ex.stack}`);
+    } catch (err: any) {
+      logger.error(`PubSub>>subscribe: service:${service}. Error:${err.message}. Stack:${err.stack}`);
     }
   }
 
@@ -210,8 +219,8 @@ export default class PubSubService {
         this.subChannel.unbindQueue(this.subQueue, EXCHANGE_NAME, service);
         logger.debug(`[*] unsubscribed from service:${service}`);
       }
-    } catch (ex) {
-      logger.error(`PubSub>>unsubscribe: service:${service}. Error:${ex.message}. Stack:${ex.stack}`);
+    } catch (err: any) {
+      logger.error(`PubSub>>unsubscribe: service:${service}. Error:${err.message}. Stack:${err.stack}`);
     }
   }
 }

@@ -1,7 +1,7 @@
 // All Business logic will be here
 
 import { Service } from 'typedi';
-import { IProduct } from '../../database/models/Product.js';
+import { Product } from '../../database/models/Product.js';
 import ProductRepository from '../../database/repository/ProductRepository.js';
 import { FormateData } from '../../utils/index.js';
 
@@ -9,7 +9,7 @@ import { FormateData } from '../../utils/index.js';
 export default class ProductService {
   constructor(private readonly productRepository: ProductRepository) {}
 
-  async CreateProduct(product: IProduct) {
+  async CreateProduct(product: Product) {
     const productResult = await this.productRepository.CreateProduct(product);
     return FormateData(productResult);
   }
@@ -35,7 +35,7 @@ export default class ProductService {
   }
 
   async GetProductsByCategory(category: string) {
-    const products: Array<IProduct> = await this.productRepository.FindByCategory(category);
+    const products: Array<Product> = await this.productRepository.FindByCategory(category);
     return FormateData(products);
   }
 

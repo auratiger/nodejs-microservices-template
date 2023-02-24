@@ -11,6 +11,8 @@ export interface IProduct extends Document {
   suplier: string;
 }
 
+export type Product = IProduct | null;
+
 const ProductSchema: Schema = new Schema({
   name: { type: String, unique: true },
   desc: String,

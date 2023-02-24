@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { Service } from 'typedi';
 import { CartModel, OrderModel } from '../models/index.js';
 import { v4 as uuidv4 } from 'uuid';
-import { ICart } from '../models/Cart.js';
+import { Cart } from '../models/Cart.js';
 
 //Dealing with data base operations
 @Service()
@@ -26,7 +26,7 @@ export default class ShoppingRepository {
   async AddCartItem(customerId: string, item: any, qty: any, isRemove: boolean) {
     // return await CartModel.deleteMany();
 
-    const cart: ICart = await CartModel.findOne({ customerId: customerId });
+    const cart: Cart = await CartModel.findOne({ customerId: customerId });
 
     const { _id } = item;
 
@@ -66,7 +66,7 @@ export default class ShoppingRepository {
   async CreateNewOrder(customerId: string, txnId: string) {
     //required to verify payment through TxnId
 
-    const cart: ICart = await CartModel.findOne({ customerId: customerId });
+    const cart: Cart = await CartModel.findOne({ customerId: customerId });
 
     if (cart) {
       let amount = 0;

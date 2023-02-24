@@ -21,7 +21,8 @@ const StartServer = async () => {
 
   Container.get(ShoppingController).init(app);
 
-  app.use(express.static(__dirname + '/public'));
+  // app.use(express.static(__dirname + '/public'));
+  //
   app
     .listen(PORT, () => {
       logger.info(`listening to port ${PORT}`);
