@@ -16,6 +16,8 @@ export interface ICustomer extends Document {
 export type ILogin = Pick<ICustomer, 'email' | 'password'>;
 export type ISignUp = Pick<ICustomer, 'email' | 'password' | 'phone'>;
 
+export type Customer = ICustomer | null;
+
 const CustomerSchema: Schema = new Schema(
   {
     name: String,

@@ -1,8 +1,8 @@
 import { Service } from 'typedi';
-import mongoose from 'mongoose';
 import { CustomerModel, AddressModel } from '../models/index.js';
 import { IAddress } from '../models/Address.js';
-import { ICustomer } from '../models/Customer.js';
+import { Customer } from '../models/Customer.js';
+import logger from '../../utils/logger.js';
 
 //Dealing with data base operations
 @Service()
@@ -20,33 +20,46 @@ export default class CustomerRepository {
     return customerResult;
   }
 
-  // TODO: use address object type here
-  async CreateAddress(userId: string, address: IAddress) {
-    const profile = await CustomerModel.findById(userId);
+  async CreateAddress(userId: string, address: IAddress): Promise<void> {
+    const profile: Customer = await CustomerModel.findById(userId);
 
-    if (profile) {
-      const newAddress: IAddress = new AddressModel(address);
-
-      await newAddress.save();
-
-      profile.address.push(newAddress);
+    if (!profile) {
+      logger.error(`customer: ${userId} is not found`);
+      throw Error;
     }
 
-    return await profile.save();
+    const newAddress: IAddress = new AddressModel(address);
+
+    await newAddress.save();
+
+    profile.address.push(newAddress);
+    await profile.save();
   }
 
-  async FindCustomer(email: string): Promise<ICustomer> {
+  async FindCustomer(email: string): Promise<Customer> {
     const existingCustomer = await CustomerModel.findOne({ email: email });
+    if (!existingCustomer) {
+      logger.error(`customer with email: ${email} is not found`);
+      throw Error;
+    }
     return existingCustomer;
   }
 
-  async FindCustomerById(userId: string): Promise<ICustomer> {
-    const existingCustomer: ICustomer = await CustomerModel.findById(userId);
+  async FindCustomerById(userId: string): Promise<Customer> {
+    const existingCustomer: Customer = await CustomerModel.findById(userId);
+    if (!existingCustomer) {
+      logger.error(`customer: ${userId} is not found`);
+      throw Error;
+    }
     return existingCustomer;
   }
 
   async GetCustomerWishlist(customerId: string) {
-    const profile = await CustomerModel.findById(customerId);
+    const profile: Customer = await CustomerModel.findById(customerId);
+    if (!profile) {
+      logger.error(`customer: ${customerId} is not found`);
+      throw Error;
+    }
 
     return profile.wishlist;
   }
@@ -61,38 +74,40 @@ export default class CustomerRepository {
       banner,
     };
 
-    const profile: ICustomer = await CustomerModel.findById(customerId).populate('wishlist');
+    const profile: Customer = await CustomerModel.findById(customerId);
 
-    if (profile) {
-      const wishlist: Array<any> = profile.wishlist;
-
-      if (wishlist.length > 0) {
-        let isExist = false;
-        wishlist.map((item: any) => {
-          if (item._id.toString() === product._id.toString()) {
-            const index = wishlist.indexOf(item);
-            wishlist.splice(index, 1);
-            isExist = true;
-          }
-        });
-
-        if (!isExist) {
-          wishlist.push(product);
-        }
-      } else {
-        wishlist.push(product);
-      }
-
-      profile.wishlist = wishlist;
+    if (!profile) {
+      logger.error(`customer: ${customerId} is not found`);
+      throw Error;
     }
 
+    const wishlist: Array<any> = profile.wishlist;
+
+    if (wishlist.length > 0) {
+      let isExist = false;
+      wishlist.map((item: any) => {
+        if (item._id.toString() === product._id.toString()) {
+          const index = wishlist.indexOf(item);
+          wishlist.splice(index, 1);
+          isExist = true;
+        }
+      });
+
+      if (!isExist) {
+        wishlist.push(product);
+      }
+    } else {
+      wishlist.push(product);
+    }
+
+    profile.wishlist = wishlist;
     const profileResult = await profile.save();
 
     return profileResult.wishlist;
   }
 
   async AddCartItem(customerId: string, { _id, name, price, banner }, qty: any, isRemove: boolean) {
-    const profile: ICustomer = await CustomerModel.findById(customerId).populate('cart');
+    const profile: Customer = await CustomerModel.findById(customerId).populate('cart');
 
     if (profile) {
       const cartItem = {

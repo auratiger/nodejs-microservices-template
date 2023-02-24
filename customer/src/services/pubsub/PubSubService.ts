@@ -1,5 +1,14 @@
 import amqplib from 'amqplib';
-import { EXCHANGE_NAME, CUSTOMER_SERVICE, HOSTNAME } from '../../config/index.js';
+import {
+  EXCHANGE_NAME,
+  CUSTOMER_SERVICE,
+  HOSTNAME,
+  RABBITMQ_USERNAME,
+  RABBITMQ_PASSWORD,
+  RABBITMQ_HOSTNAME,
+  RABBITMQ_PORT,
+  RABBITMQ_TIMEOUT,
+} from '../../config/index.js';
 import { Service } from 'typedi';
 import logger from '../../utils/logger.js';
 
@@ -17,7 +26,7 @@ export default class PubSubService {
     try {
       logger.info('[AMQP] connecting to rabbitmq');
       const conn = await amqplib.connect(
-        `amqp://${process.env.RABBITMQ_USERNAME}:${process.env.RABBITMQ_PASSWORD}@${process.env.RABBITMQ_HOSTNAME}:${process.env.RABBITMQ_PORT}?heartbeat=60`,
+        `amqp://${RABBITMQ_USERNAME}:${RABBITMQ_PASSWORD}@${RABBITMQ_HOSTNAME}:${RABBITMQ_PORT}?heartbeat=60`,
       );
       logger.info('[AMQP] connected');
 
@@ -27,7 +36,7 @@ export default class PubSubService {
         logger.error('[AMQP] connection warning: ', error.message);
         setTimeout(() => {
           this.createConnection();
-        }, parseInt(process.env.RABBITMQ_TIMEOUT) || 3000);
+        }, RABBITMQ_TIMEOUT || 3000);
         return;
       }
     }

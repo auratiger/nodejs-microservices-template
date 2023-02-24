@@ -2,7 +2,7 @@ import { Service } from 'typedi';
 import CustomerRepository from '../../database/repository/CustomerRepository.js';
 import { FormateData, GeneratePassword, GenerateSalt, GenerateSignature, ValidatePassword } from '../../utils/utils.js';
 import logger from '../../utils/logger.js';
-import { ICustomer, ILogin, ISignUp } from '../../database/models/Customer.js';
+import { Customer, ILogin, ISignUp } from '../../database/models/Customer.js';
 import { IAddress } from '../../database/models/Address.js';
 
 // All Business logic will be here
@@ -62,7 +62,7 @@ export default class CustomerService {
   }
 
   async GetProfile(userId: string) {
-    const existingCustomer: ICustomer = await this.customerRepository.FindCustomerById(userId);
+    const existingCustomer: Customer = await this.customerRepository.FindCustomerById(userId);
     return FormateData(existingCustomer);
   }
 
