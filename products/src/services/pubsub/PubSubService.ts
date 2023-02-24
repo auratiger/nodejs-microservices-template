@@ -31,9 +31,9 @@ export default class PubSubService {
       logger.info('[AMQP] connected');
 
       this.amqpConn = conn;
-    } catch (error) {
-      if (error) {
-        logger.error('[AMQP] connection warning: ', error.message);
+    } catch (err: any) {
+      if (err) {
+        logger.error('[AMQP] connection warning: ', err.message);
         setTimeout(() => {
           this.createConnection();
         }, RABBITMQ_TIMEOUT || 3000);
@@ -139,8 +139,8 @@ export default class PubSubService {
       if (this.pubChannel) this.pubChannel.removeAllListeners();
       if (this.amqpConn) this.amqpConn.close();
       logger.info('Closed connection.');
-    } catch (ex) {
-      logger.error('PubSub>>close. Error: ', ex.message, '. Stack: ', ex.stack);
+    } catch (err: any) {
+      logger.error('PubSub>>close. Error: ', err.message, '. Stack: ', err.stack);
     }
   }
 
@@ -167,8 +167,8 @@ export default class PubSubService {
           }
         },
       );
-    } catch (e) {
-      logger.error('[AMQP] publish error: ', e.message);
+    } catch (err: any) {
+      logger.error('[AMQP] publish error: ', err.message);
     }
   }
 
@@ -199,8 +199,8 @@ export default class PubSubService {
       }
 
       // eventEmitter.emit(INTERNAL_EVENTS_CHANNELS.SUBSCRIBE_TO_TOPIC, { service });
-    } catch (ex) {
-      logger.error(`PubSub>>subscribe: service:${service}. Error:${ex.message}. Stack:${ex.stack}`);
+    } catch (err: any) {
+      logger.error(`PubSub>>subscribe: service:${service}. Error:${err.message}. Stack:${err.stack}`);
     }
   }
 
@@ -219,8 +219,8 @@ export default class PubSubService {
         this.subChannel.unbindQueue(this.subQueue, EXCHANGE_NAME, service);
         logger.debug(`[*] unsubscribed from service:${service}`);
       }
-    } catch (ex) {
-      logger.error(`PubSub>>unsubscribe: service:${service}. Error:${ex.message}. Stack:${ex.stack}`);
+    } catch (err: any) {
+      logger.error(`PubSub>>unsubscribe: service:${service}. Error:${err.message}. Stack:${err.stack}`);
     }
   }
 }
