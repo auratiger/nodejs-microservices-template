@@ -1,6 +1,8 @@
 import { Service } from 'typedi';
 import mongoose from 'mongoose';
 import { CustomerModel, AddressModel } from '../models/index.js';
+import { IAddress } from '../models/Address.js';
+import { ICustomer } from '../models/Customer.js';
 
 //Dealing with data base operations
 @Service()
@@ -18,16 +20,12 @@ export default class CustomerRepository {
     return customerResult;
   }
 
-  async CreateAddress({ _id, street, postalCode, city, country }) {
-    const profile = await CustomerModel.findById(_id);
+  // TODO: use address object type here
+  async CreateAddress(userId: string, address: IAddress) {
+    const profile = await CustomerModel.findById(userId);
 
     if (profile) {
-      const newAddress: any = new AddressModel({
-        street,
-        postalCode,
-        city,
-        country,
-      });
+      const newAddress: IAddress = new AddressModel(address);
 
       await newAddress.save();
 
@@ -37,36 +35,24 @@ export default class CustomerRepository {
     return await profile.save();
   }
 
-  async FindCustomer({ email }) {
+  async FindCustomer(email: string): Promise<ICustomer> {
     const existingCustomer = await CustomerModel.findOne({ email: email });
     return existingCustomer;
   }
 
-  async FindCustomerById({ id }) {
-    const existingCustomer = await CustomerModel.findById(id).populate(
-      'address',
-    );
-    // existingCustomer.cart = [];
-    // existingCustomer.orders = [];
-    // existingCustomer.wishlist = [];
-
-    // await existingCustomer.save();
+  async FindCustomerById(userId: string): Promise<ICustomer> {
+    const existingCustomer: ICustomer = await CustomerModel.findById(userId);
     return existingCustomer;
   }
 
-  async Wishlist(customerId: string) {
-    const profile = await CustomerModel.findById(customerId).populate(
-      'wishlist',
-    );
+  async GetCustomerWishlist(customerId: string) {
+    const profile = await CustomerModel.findById(customerId);
 
     return profile.wishlist;
   }
 
-  async AddWishlistItem(
-    customerId: string,
-    { _id, name, desc, price, available, banner },
-  ) {
-    const product = {
+  async AddWishlistItem(customerId: string, { _id, name, desc, price, available, banner }) {
+    const product: any = {
       _id,
       name,
       desc,
@@ -75,16 +61,14 @@ export default class CustomerRepository {
       banner,
     };
 
-    const profile = await CustomerModel.findById(customerId).populate(
-      'wishlist',
-    );
+    const profile: ICustomer = await CustomerModel.findById(customerId).populate('wishlist');
 
     if (profile) {
-      const wishlist = profile.wishlist;
+      const wishlist: Array<any> = profile.wishlist;
 
       if (wishlist.length > 0) {
         let isExist = false;
-        wishlist.map((item) => {
+        wishlist.map((item: any) => {
           if (item._id.toString() === product._id.toString()) {
             const index = wishlist.indexOf(item);
             wishlist.splice(index, 1);
@@ -107,13 +91,8 @@ export default class CustomerRepository {
     return profileResult.wishlist;
   }
 
-  async AddCartItem(
-    customerId: string,
-    { _id, name, price, banner },
-    qty: any,
-    isRemove: boolean,
-  ) {
-    const profile = await CustomerModel.findById(customerId).populate('cart');
+  async AddCartItem(customerId: string, { _id, name, price, banner }, qty: any, isRemove: boolean) {
+    const profile: ICustomer = await CustomerModel.findById(customerId).populate('cart');
 
     if (profile) {
       const cartItem = {
@@ -121,7 +100,7 @@ export default class CustomerRepository {
         unit: qty,
       };
 
-      const cartItems = profile.cart;
+      const cartItems: Array<any> = profile.cart;
 
       if (cartItems.length > 0) {
         let isExist = false;

@@ -1,36 +1,24 @@
 import { Service } from 'typedi';
 import { CUSTOMER_SERVICE, SHOPPING_SERVICE } from '../config/index.js';
+import { IProduct } from '../database/models/Product.js';
 import ProductService from '../services/products/ProductService.js';
 import PubSubService from '../services/pubsub/PubSubService.js';
 import UserAuth from './middlewares/UserAuth.js';
 
 @Service()
 export default class ProductController {
-  constructor(
-    private readonly productService: ProductService,
-    private readonly pubSubService: PubSubService,
-  ) {}
+  constructor(private readonly productService: ProductService, private readonly pubSubService: PubSubService) {}
 
   public init(app: any): void {
     app.post('/product/create', async (req, res, next) => {
-      const { name, desc, type, unit, price, available, suplier, banner } =
-        req.body;
+      const product: IProduct = req.body;
       // validation
-      const { data } = await this.productService.CreateProduct({
-        name,
-        desc,
-        type,
-        unit,
-        price,
-        available,
-        suplier,
-        banner,
-      });
+      const { data } = await this.productService.CreateProduct(product);
       return res.json(data);
     });
 
     app.get('/category/:type', async (req, res, next) => {
-      const type = req.params.type;
+      const type: string = req.params.type;
 
       try {
         const { data } = await this.productService.GetProductsByCategory(type);
@@ -41,12 +29,10 @@ export default class ProductController {
     });
 
     app.get('/:id', async (req, res, next) => {
-      const productId = req.params.id;
+      const productId: string = req.params.id;
 
       try {
-        const { data } = await this.productService.GetProductDescription(
-          productId,
-        );
+        const { data } = await this.productService.GetProductDescription(productId);
         return res.status(200).json(data);
       } catch (error) {
         return res.status(404).json({ error });
@@ -62,11 +48,7 @@ export default class ProductController {
     app.put('/wishlist', UserAuth, async (req, res, next) => {
       const { _id } = req.user;
 
-      const { data } = await this.productService.GetProductPayload(
-        _id,
-        { productId: req.body._id },
-        'ADD_TO_WISHLIST',
-      );
+      const { data } = await this.productService.GetProductPayload(_id, { productId: req.body._id }, 'ADD_TO_WISHLIST');
 
       this.pubSubService.publishMessage(CUSTOMER_SERVICE, JSON.stringify(data));
 
@@ -77,11 +59,7 @@ export default class ProductController {
       const { _id } = req.user;
       const productId = req.params.id;
 
-      const { data } = await this.productService.GetProductPayload(
-        _id,
-        { productId },
-        'REMOVE_FROM_WISHLIST',
-      );
+      const { data } = await this.productService.GetProductPayload(_id, { productId }, 'REMOVE_FROM_WISHLIST');
       this.pubSubService.publishMessage(CUSTOMER_SERVICE, JSON.stringify(data));
 
       res.status(200).json(data.data.product);
@@ -108,11 +86,7 @@ export default class ProductController {
       const { _id } = req.user;
       const productId = req.params.id;
 
-      const { data } = await this.productService.GetProductPayload(
-        _id,
-        { productId },
-        'REMOVE_FROM_CART',
-      );
+      const { data } = await this.productService.GetProductPayload(_id, { productId }, 'REMOVE_FROM_CART');
 
       this.pubSubService.publishMessage(CUSTOMER_SERVICE, JSON.stringify(data));
       this.pubSubService.publishMessage(SHOPPING_SERVICE, JSON.stringify(data));
@@ -123,9 +97,7 @@ export default class ProductController {
     });
 
     app.get('/whoami', (req, res, next) => {
-      return res
-        .status(200)
-        .json({ msg: '/ or /products : I am products Service' });
+      return res.status(200).json({ msg: '/ or /products : I am products Service' });
     });
 
     //get Top products and category

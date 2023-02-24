@@ -1,0 +1,26 @@
+[
+   {
+      "_id": {
+         "$oid": "63f7dec7dca4979e77a858dc"
+      },
+      "email": "test4@test.com",
+      "password": "$2b$10$YBzqUyEtZdYmzWGKW7gFp./jVj.bCsIimxlCg6OdvdOJZutILiwqG",
+      "salt": "$2b$10$YBzqUyEtZdYmzWGKW7gFp.",
+      "phone": "12345",
+      "address": [],
+      "cart": [],
+      "wishlist": [],
+      "orders": [],
+      "createdAt": {
+         "$date": {
+            "$numberLong": "1677188807458"
+         }
+      },
+      "updatedAt": {
+         "$date": {
+            "$numberLong": "1677188807458"
+         }
+      },
+      "__v": 0
+   }
+]

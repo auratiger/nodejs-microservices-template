@@ -1,10 +1,25 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
+import { IAddress } from './Address.js';
 
-const Schema = mongoose.Schema;
+export interface ICustomer extends Document {
+  name: string;
+  email: string;
+  password: string;
+  salt: string;
+  phone: string;
+  address: Array<IAddress>;
+  cart: Array<any>;
+  wishlist: Array<any>;
+  orders: Array<any>;
+}
 
-const CustomerSchema = new Schema(
+export type ILogin = Pick<ICustomer, 'email' | 'password'>;
+export type ISignUp = Pick<ICustomer, 'email' | 'password' | 'phone'>;
+
+const CustomerSchema: Schema = new Schema(
   {
-    email: String,
+    name: String,
+    email: { type: String, unique: true },
     password: String,
     salt: String,
     phone: String,
@@ -23,11 +38,8 @@ const CustomerSchema = new Schema(
     wishlist: [
       {
         _id: { type: String, require: true },
-        name: { type: String },
-        description: { type: String },
-        banner: { type: String },
-        avalable: { type: Boolean },
-        price: { type: Number },
+        productId: { type: String, require: true },
+        date: { type: Date, default: Date.now() },
       },
     ],
     orders: [
@@ -50,4 +62,4 @@ const CustomerSchema = new Schema(
   },
 );
 
-export default mongoose.model('customer', CustomerSchema);
+export default mongoose.model<ICustomer>('customer', CustomerSchema);

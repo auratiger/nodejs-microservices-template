@@ -20,9 +20,7 @@ const formatMeta = (meta: any): string => {
   // You can format the splat yourself
   const splat: Array<string> = meta[Symbol.for('splat')];
   if (splat && splat.length) {
-    return splat.length === 1
-      ? JSON.stringify(splat[0])
-      : JSON.stringify(splat);
+    return splat.length === 1 ? JSON.stringify(splat[0]) : JSON.stringify(splat);
   }
   return '';
 };

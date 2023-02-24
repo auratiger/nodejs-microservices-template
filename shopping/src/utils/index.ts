@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import amqplib from 'amqplib';
 import { APP_SECRET } from '../config/index.js';
 import logger from './logger.js';
 
@@ -45,3 +46,25 @@ export const FormateData = (data) => {
     throw new Error('Data Not found!');
   }
 };
+
+// module.exports.SubscribeMessage = async (channel, service) => {
+//   await channel.assertExchange(EXCHANGE_NAME, 'direct', { durable: true });
+//   const q = await channel.assertQueue('', { exclusive: true });
+//   console.log(` Waiting for messages in queue: ${q.queue}`);
+
+//   channel.bindQueue(q.queue, EXCHANGE_NAME, SHOPPING_SERVICE);
+
+//   channel.consume(
+//     q.queue,
+//     (msg) => {
+//       if (msg.content) {
+//         console.log('the message is:', msg.content.toString());
+//         service.SubscribeEvents(msg.content.toString());
+//       }
+//       console.log('[X] received');
+//     },
+//     {
+//       noAck: true,
+//     },
+//   );
+// };

@@ -1,12 +1,17 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 
-const Schema = mongoose.Schema;
+export interface IAddress extends Document {
+  street: string;
+  postalCode: string;
+  city: string;
+  country: string;
+}
 
-const AddressSchema = new Schema({
+const AddressSchema: Schema = new Schema({
   street: String,
   postalCode: String,
   city: String,
   country: String,
 });
 
-export default mongoose.model('Address', AddressSchema);
+export default mongoose.model<IAddress>('Address', AddressSchema);
