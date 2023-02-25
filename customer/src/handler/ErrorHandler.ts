@@ -1,9 +1,10 @@
 import { HttpStatusCode } from 'axios';
 import { Express, Request, Response, NextFunction } from 'express';
+import { ValidationError } from 'express-validation';
 import { Service } from 'typedi';
-import ApiError from '../shared/errors/ApiError.js';
-import BaseError from '../shared/errors/BaseError.js';
 import logger from '../utils/logger.js';
+import ApiError from './errors/ApiError.js';
+import BaseError from './errors/BaseError.js';
 
 export const tryCatch =
   (callback: (req: Request, res: Response) => Promise<any>) =>
@@ -30,17 +31,14 @@ export default class ErrorHandler {
     });
   }
 
-  private handler = async (err: BaseError, req: Request, res: Response, next: NextFunction) => {
+  private handler = async (err: Error, req: Request, res: Response, next: NextFunction) => {
     if (!this.isTrustedError(err)) {
       next(err);
       return;
     }
 
-    if (err.name === 'ValidationError') {
-      return res.status(HttpStatusCode.BadRequest).send({
-        type: 'ValidationError',
-        details: err.message,
-      });
+    if (err instanceof ValidationError) {
+      return res.status(err.statusCode).json(err);
     }
 
     if (err instanceof ApiError) {

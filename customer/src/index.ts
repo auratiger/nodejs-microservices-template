@@ -8,7 +8,7 @@ import logger from './utils/logger.js';
 import DatabaseConnection from './database/DatabaseConnection.js';
 import PubSubService from './services/pubsub/PubSubService.js';
 import CustomerController from './api/CustomerController.js';
-import ErrorHandler from './utils/error-handler.js';
+import ErrorHandler from './handler/ErrorHandler.js';
 
 const startServer = async () => {
   const app: Express = express();
