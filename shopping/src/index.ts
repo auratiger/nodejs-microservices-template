@@ -8,18 +8,20 @@ import logger from './utils/logger.js';
 import { Container } from 'typedi';
 import PubSubService from './services/pubsub/PubSubService.js';
 import ShoppingController from './api/ShoppingController.js';
+import ErrorHandler from './handler/ErrorHandler.js';
 
 const StartServer = async () => {
   const app = express();
   app.use(express.json());
   app.use(cors());
 
-  await DatabaseConnection();
+  Container.get(ErrorHandler).init(app);
+  Container.get(ShoppingController).init(app);
 
   const pubSubService = Container.get(PubSubService);
   await pubSubService.createConnection();
 
-  Container.get(ShoppingController).init(app);
+  await DatabaseConnection();
 
   // app.use(express.static(__dirname + '/public'));
   //

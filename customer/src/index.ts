@@ -8,16 +8,18 @@ import logger from './utils/logger.js';
 import DatabaseConnection from './database/DatabaseConnection.js';
 import PubSubService from './services/pubsub/PubSubService.js';
 import CustomerController from './api/CustomerController.js';
+import ErrorHandler from './handler/ErrorHandler.js';
 
 const startServer = async () => {
   const app: Express = express();
   app.use(express.json());
   app.use(cors());
 
+  Container.get(ErrorHandler).init(app);
+  Container.get(CustomerController).init(app);
+
   const pubSubService = Container.get(PubSubService);
   await pubSubService.createConnection();
-
-  Container.get(CustomerController).init(app);
 
   await DatabaseConnection();
 

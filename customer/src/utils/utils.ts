@@ -38,7 +38,7 @@ export const ValidateSignature = async (req: Request) => {
 
     logger.info(signature);
     const payload = await jwt.verify(signature.split(' ')[1], APP_SECRET);
-    req.body._user = payload;
+    (req as Request & { user: any }).user = payload;
 
     return true;
   } catch (error) {

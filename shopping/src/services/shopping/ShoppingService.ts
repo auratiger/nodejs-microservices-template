@@ -1,14 +1,14 @@
 import { Service } from 'typedi';
 import ShoppingRepository from '../../database/repository/ShoppingRepository.js';
-import { FormateData } from '../../utils/index.js';
+import { FormateData } from '../../utils/utils.js';
 
 // All Business logic will be here
 @Service()
 export default class ShoppingService {
   constructor(private readonly shoppingRepository: ShoppingRepository) {}
 
-  async GetCart({ _id }) {
-    const cartItems = await this.shoppingRepository.Cart(_id);
+  async GetCart(userId: string) {
+    const cartItems = await this.shoppingRepository.Cart(userId);
     return FormateData(cartItems);
   }
 
@@ -23,7 +23,7 @@ export default class ShoppingService {
     return FormateData(orders);
   }
 
-  async GetOrderDetails(productId: string, { _id, orderId }) {
+  async GetOrderDetails(productId: string, { userId: string, orderId }) {
     const orders = await this.shoppingRepository.Orders(productId);
     return FormateData(orders);
   }
